@@ -1,7 +1,5 @@
 # lushdriver
 
-driver and care for the environment
-
 Pls follow these steps to run the app:
 
 1. Clone the repo and run npm install or yarn from the root of the project folder.
