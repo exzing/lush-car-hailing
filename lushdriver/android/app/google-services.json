@@ -1,0 +1,251 @@
+{
+  "project_info": {
+    "project_number": "478816800318",
+    "firebase_url": "https://exzingdb-default-rtdb.firebaseio.com",
+    "project_id": "exzingdb",
+    "storage_bucket": "exzingdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:db66a8d19e1cced240cb6f",
+        "android_client_info": {
+          "package_name": "com.exzing.find_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:9d64d8fedb75aee340cb6f",
+        "android_client_info": {
+          "package_name": "com.exzing.findadriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-55hv0dg1vfl0ti901ht18f3q82l75g65.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exzing.findadriver",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:b3006ae89ca9cc1140cb6f",
+        "android_client_info": {
+          "package_name": "com.exzing.findarider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:41d1578ceeb510ed40cb6f",
+        "android_client_info": {
+          "package_name": "com.exzing.lushdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:dd8589a5534cb23b40cb6f",
+        "android_client_info": {
+          "package_name": "com.gmphackrider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-lo9bcdevs4dduh16e4kl6vo0m23aiq51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gmphackrider",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478816800318:android:f3b4fcf4ee63371840cb6f",
+        "android_client_info": {
+          "package_name": "com.hireadriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "478816800318-b4jju9nabtbgceo51jrbri9qv46l5vpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hireadriver",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMGpj92VVKtQQWZYcJGQksYFYZfwzNbXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "478816800318-d5k5htugi6ojn03ivf1v5rv7lpij00mc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "478816800318-0smhb4kglf830oe96so8579dp6mtcsjt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.exzing.hireadriver"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
