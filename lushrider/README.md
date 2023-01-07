@@ -3,7 +3,7 @@
 Pls follow these steps to run the app:
 
 1. Clone the repo and run npm install or yarn from the root of the project folder.
-2. This app requires the Google Map API key work. So Create an API Key from the google cloud console (https://console.cloud.google.com/apis/credentials). Create a file named env.js then add the API Key to the env.js file:
+2. This app requires the Google Map API key work. So create an API Key from the google cloud console (https://console.cloud.google.com/apis/credentials). Then create a file named env.js and add the API Key to the env.js file:
    export const keys = {
    GOOGLE_MAP_APIKEY: 'AIzaSyDNaKE-KYiemHsLIWpjRaZ8MpkZ7T3TkHE',
    };
@@ -16,7 +16,7 @@ Pls follow these steps to run the app:
    </application>
 
 4. For the ios app navigate to this folder and add your API Key there:
-   ~/lushdriver/ios/lushrider/AppDelegate.mm
+   ~/lushrider/ios/lushrider/AppDelegate.mm
 
    @implementation AppDelegate
 
