@@ -5,7 +5,7 @@ Pls follow these steps to run the app:
 1. Clone the repo and run npm install or yarn from the root of the project folder.
 2. This app requires the Google Map API key work. So Create an API Key from the google cloud console (https://console.cloud.google.com/apis/credentials). Create a file named env.js then add the API Key to the env.js file:
    export const keys = {
-   GOOGLE_MAP_APIKEY: 'AIzaSyDNaKE-KYiemHsLIWpjRaZ8MpkZ7T3TkHE',
+   GOOGLE_MAP_APIKEY: 'GOOGLE_MAP_API_KEY',
    };
    This file is added to the .gitignore file to prevent checking it into version control.
 
