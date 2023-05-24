@@ -13,9 +13,10 @@ The app is architected with a typica design of a ride sharing mobile application
 ## Technology stacks
  * React-native
  * Google Cloud Patform (GCP)
- * 
+ * Google Maps
+ * XRPL Chain
 ---
-## Problem we are solution
+## Problem we are solving
 We noticed that a lot of users (riders and drivers) of ride-hailing apps have not idea about their impact on the environment in terms of carbon footprint or emmission. This is a serious issue considering the deteriorating effect of climate change globally. Furthermore, most drivers are groaning under the burden of huge remittances to ride-sharing app owners
 
 ---
@@ -26,8 +27,7 @@ To further make the solution more encompassing we've decided to add a blockchain
 
 ---
 ## Demo
-You can find the demo here: 
-https://www.exzing.com/product
+You can find the demo here: https://www.exzing.com/product
 ---
 ## Guidelines On Running the App
 
