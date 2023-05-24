@@ -13,6 +13,8 @@ The app is architected with a typica design of a ride sharing mobile application
 ## Technology stacks
  * React-native
  * Google Cloud Patform (GCP)
+ * Microsoft Azure
+ * AWS
  * Google Maps
  * XRPL Chain
 ---
@@ -31,5 +33,6 @@ You can find the demo here: https://www.exzing.com/product
 
 ---
 ## Guidelines On Running the App
+Navigate to the driver app in the lushdriver directory and its rider counterpart in the lushrider directory. In these directories, you will find the instructions to run the app. If you're having any trouble doing this, we have also included an APK here for you to use and view the app.
 
 ---
