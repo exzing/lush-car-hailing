@@ -6,7 +6,7 @@ This project consists of both the lushdriver app and the lushrider app
 
 ---
 ## Technical Design
-The app is architected with a typica design of a ride sharing mobile application except that this time additional features are added to make it unique. The unique feature include a **carbon footprint calculator** and an **NFT funtionality** powered by **XRPL** chain.
+The app is architected with a typical design of a ride sharing mobile application except that this time additional features are added to make it unique. The unique feature include a **carbon footprint calculator** and an **NFT funtionality** powered by **XRPL** chain.
 
 ---
 ## Technology stacks
