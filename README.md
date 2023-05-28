@@ -6,7 +6,12 @@ This project consists of both the lushdriver app and the lushrider app
 
 ---
 ## Technical Design
-The app is architected with a typical design of a ride sharing mobile application except that this time additional features are added to make it unique. The unique feature include a **carbon footprint calculator** and an **NFT funtionality** powered by **XRPL** chain.
+The app is architected with a typical design of a ride sharing mobile application except that this time additional features are added to make it unique. The unique feature include a **carbon footprint calculator** and an **NFT funtionality** powered by **XRPL** chain. Both the rider and driver apps use the Firebase Authentication SDK for managing users access to the app. During the signup process, information entered by the user is used to calculate the carbon footprint. The XRPL React SDK enables the implementation of an XRPLS Wallet with the capability of Minting an NFT out of the unique value of the user's carbon footprint. This value is stored in the Wallet Page of the app.
+
+For the purpose of redundancy and emergency, users data are hosted in different services including IPFS, AWS S3, and Google Storage (accessed via Firebase Realtime SDK). We haven't yet implemented the IPFS scheme but will be doing that in the next iteration.
+We also have a partnership with Azure, that affords us free credits to user their services some workloads. This is really important because the solution is a complex one that will need to scale with users' widespread adoption. 
+
+An **analytics board** will be added in due course to the journey page of the users to keep them informed of their carbon footprint evaluations.
 
 ---
 ## Technology stacks
@@ -16,6 +21,7 @@ The app is architected with a typical design of a ride sharing mobile applicatio
  * AWS
  * Google Maps
  * XRPL Chain
+ * IPFS
 ---
 ## Problem we are solving
 We noticed that a lot of users (riders and drivers) of ride-hailing apps have no idea how their activities impact the environment in terms of carbon footprint or emmission. This is a serious issue considering the deteriorating effect of climate change globally. Furthermore, most drivers are groaning under the burden of huge remittances to ride-sharing app owners
