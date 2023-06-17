@@ -10,17 +10,11 @@ import {
   StatusBar,
   ActivityIndicator,
 } from 'react-native';
-// import FormInput from '../components/FormInput';
-// import FormButton from '../components/FormButton';
-// import SocialButton from '../components/SocialButton';
 import {AuthContext} from '../navigation/AuthProvider';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-// import Fontiso from 'react-native-vector-icons/Fontisto';
-// import GradientText from '../components/GradientText';
-// import MaskedView from '@react-native-masked-view/masked-view';
 import Toast from 'react-native-simple-toast';
 import {SelectList} from 'react-native-dropdown-select-list';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -384,12 +378,7 @@ const SignupScreen = ({navigation}) => {
           {isLoading && (
             <View style={styles.preloader}>
               <ActivityIndicator size="large" color="gold" />
-              {Toast.showWithGravity(
-                `Welcome
-              ${user ? user.displayName : user?.email}!`,
-                Toast.LONG,
-                Toast.TOP,
-              )}
+              {Toast.showWithGravity(`Welcome!`, Toast.LONG, Toast.TOP)}
             </View>
           )}
 
@@ -509,8 +498,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 30,
-    paddingHorizontal: 90,
+    // paddingHorizontal: 90,
     paddingBottom: 50,
+    alignSelf: 'center',
   },
   text_footer: {
     color: '#f9d29d',

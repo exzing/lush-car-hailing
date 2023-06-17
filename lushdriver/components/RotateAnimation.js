@@ -3,8 +3,7 @@ import {Animated, StyleSheet, Text, View} from 'react-native';
 import Logo from '../assets/ic_launcher_round.png';
 
 //import hook
-import {useProgress} from './UseRotation';
-import useRotation from './UseRotation';
+import useRotation, {useProgress} from './UseRotation';
 
 export default function RotateAnimation() {
   // get degrees from hook

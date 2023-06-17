@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import {
   useTheme,
@@ -17,18 +17,38 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // import {AuthContext} from '../components/context';
 import {AuthContext} from '../navigation/AuthProvider';
+import {firebase} from '@react-native-firebase/database';
+// import { firebase } from '@react-native-firebase/auth';
 
 export function DrawerContent(props) {
   const paperTheme = useTheme();
-  const {user, logout} = useContext(AuthContext);
+  const {user, logout, driversIdRef} = useContext(AuthContext);
   const userPhoto = require('../assets/users/user_icon.png');
-  // const {signOut, toggleTheme} = React.useContext(AuthContext);
+  const [profileName, setProfileName] = useState(null);
+  const [profilePhone, setProfilePhone] = useState(null);
+  const [profileEmail, setProfileEmail] = useState(null);
 
-  //   <Image
-  //   resizeMode="stretch"
-  //   source={CompanyIcon}
-  //   style={styles.infoImage}
-  // />
+  useEffect(() => {
+    const checkSignIn = async () => {
+      // if (driversIdRef) {
+      const authDriversRef = firebase.database().ref(`drivers/${user?.uid}`);
+      authDriversRef.on('value', snap => {
+        console.log({profileSnap: snap});
+
+        if (snap.exists()) {
+          const email = snap.val()?.email;
+          const username = snap.val()?.userName;
+          const phonenum = snap.val()?.phone;
+          console.log({email, username, phonenum});
+          setProfileEmail(email);
+          setProfileName(username);
+          setProfilePhone(phonenum);
+        }
+      });
+      // }
+    };
+    checkSignIn();
+  }, [driversIdRef, user?.uid]);
 
   return (
     <View style={{flex: 1}}>
@@ -50,9 +70,15 @@ export function DrawerContent(props) {
               />
 
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                <Title style={styles.title}> {user && user.displayName}</Title>
+                <Title style={styles.title}>
+                  {' '}
+                  {(user && user?.displayName) ?? profileName}
+                </Title>
                 <Caption style={styles.caption}>
-                  {user ? user?.email : ''}
+                  {(user && user?.email) ?? profileEmail}
+                </Caption>
+                <Caption style={styles.caption}>
+                  {(user && user?.phoneNumber) ?? profilePhone}
                 </Caption>
               </View>
             </View>
@@ -94,11 +120,31 @@ export function DrawerContent(props) {
             />
             <DrawerItem
               icon={({color, size}) => (
+                <Icon name="chat" color={color} size={size} />
+              )}
+              label="Chats"
+              onPress={() => {
+                props.navigation.navigate('ChatScreen');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
+                <Icon name="wallet" color={color} size={size} />
+              )}
+              label="Wallet"
+              onPress={() => {
+                props.navigation.navigate('WalletScreen');
+              }}
+            />
+            <DrawerItem
+              icon={({color, size}) => (
                 <Icon name="bookmark-outline" color={color} size={size} />
               )}
               label="My Bookings"
               onPress={() => {
-                props.navigation.navigate('BookmarkScreen');
+                {
+                }
+                // props.navigation.navigate('BookmarkScreen');
               }}
             />
             <DrawerItem
@@ -107,7 +153,9 @@ export function DrawerContent(props) {
               )}
               label="Settings"
               onPress={() => {
-                props.navigation.navigate('SettingScreen');
+                {
+                }
+                // props.navigation.navigate('SettingScreen');
               }}
             />
             <DrawerItem
@@ -116,7 +164,9 @@ export function DrawerContent(props) {
               )}
               label="Support"
               onPress={() => {
-                props.navigation.navigate('SupportScreen');
+                {
+                }
+                // props.navigation.navigate('SupportScreen');
               }}
             />
           </Drawer.Section>

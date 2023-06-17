@@ -16,11 +16,15 @@ import HomelyScreen from '../screens/HomelyScreen';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {Journey} from '../screens/Journey';
 import HomeScreen from '../screens/HomeScreen';
+import {styles} from '../styles/shared';
+import {WalletScreen} from './wallets/WalletScreen';
+import {theme} from '../styles/theme';
 
 const HomeStack = createStackNavigator();
 const NotificationStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const MapStack = createStackNavigator();
+const WalletStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -30,8 +34,8 @@ const MainTabScreen = ({navigation}) => (
       name="MyHome"
       component={HomeStackScreen}
       options={{
-        tabBarLabel: `Home`,
-        tabBarColor: '#00000',
+        tabBarLabel: 'Home',
+        // tabBarColor: '#00000',
         tabBarIcon: ({color}) => (
           <Icon name="ios-home" color={color} size={26} />
         ),
@@ -41,8 +45,8 @@ const MainTabScreen = ({navigation}) => (
       name="Profile"
       component={ProfileStackScreen}
       options={{
-        tabBarLabel: `Profile`,
-        tabBarColor: '#694fad',
+        tabBarLabel: 'Profile',
+        // tabBarColor: '#694fad',
         tabBarIcon: ({color}) => (
           <Icon name="ios-person" color={color} size={26} />
         ),
@@ -53,12 +57,22 @@ const MainTabScreen = ({navigation}) => (
       component={MapStackScreen}
       options={{
         tabBarStyle: {display: 'none'},
-        tabBarLabel: `Journey`,
-        tabBarColor: '#d02860',
+        tabBarLabel: 'Journey',
+        // tabBarColor: '#d02860',
+
         // #f9d29d
-        tabBarIcon: ({color}) => (
-          <Icon name="ios-aperture" color={color} size={26} />
-        ),
+        tabBarIcon: ({color}) => <Icon name="map" color={color} size={26} />,
+      }}
+    />
+    <Tab.Screen
+      name="Wallet"
+      component={WalletStackScreen}
+      options={{
+        tabBarStyle: {display: 'none'},
+        tabBarLabel: 'Wallet',
+        // tabBarColor: '#d02860',
+        // #f9d29d
+        tabBarIcon: ({color}) => <Icon name="wallet" color={color} size={26} />,
       }}
     />
   </Tab.Navigator>
@@ -180,7 +194,7 @@ const ProfileStackScreen = ({navigation}) => {
         name="Profiley"
         component={ProfileScreen}
         options={{
-          title: `MY PROFILE`,
+          title: 'MY PROFILE',
           headerTitleAlign: 'center',
           headerTintColor: '#fff',
           headerStyle: {
@@ -188,25 +202,15 @@ const ProfileStackScreen = ({navigation}) => {
             shadowColor: '#f9fafd',
             elevation: 30,
           },
-          headerLeft: () => (
-            <View style={{marginLeft: 10}}>
-              <Icon.Button
-                name="ios-menu"
-                size={25}
-                backgroundColor="#f9d29d"
-                color={colors.text}
-                onPress={() => navigation.openDrawer()}
-              />
-            </View>
-          ),
+          headerLeft: () => GoBackBtn(navigation),
           headerRight: () => (
             <View style={{marginRight: 10}}>
               <MaterialCommunityIcons.Button
                 name="account-edit"
                 size={25}
-                backgroundColor="#f9d29d"
+                backgroundColor={theme.COLORS.BEIGE}
                 color={colors.text}
-                onPress={() => navigation.navigate('EditProfile')}
+                onPress={() => {}}
               />
             </View>
           ),
@@ -222,6 +226,54 @@ const ProfileStackScreen = ({navigation}) => {
     </ProfileStack.Navigator>
   );
 };
+
+const GoBackBtn = navigation => {
+  return (
+    <View style={styles.go_back}>
+      <FontAwesome.Button
+        name="long-arrow-left"
+        size={20}
+        backgroundColor="beige"
+        color="#333"
+        onPress={() => navigation.goBack()}
+        // onPress={() => navigation.navigate('Login')}
+      />
+    </View>
+  );
+};
+const WalletStackScreen = ({navigation}) => {
+  const {colors} = useTheme();
+
+  return (
+    <WalletStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowColor: colors.background, // iOS
+          elevation: 0, // Android
+        },
+        headerTintColor: colors.text,
+        // headerShown: false,
+      }}>
+      <WalletStack.Screen
+        name="WalletScreen"
+        component={WalletScreen}
+        options={{
+          title: 'MY WALLET',
+          headerTitleAlign: 'center',
+          headerTintColor: '#fff',
+          headerStyle: {
+            backgroundColor: 'black',
+            shadowColor: '#f9fafd',
+            elevation: 30,
+          },
+          headerLeft: () => GoBackBtn(navigation),
+        }}
+      />
+    </WalletStack.Navigator>
+  );
+};
+
 const MapStackScreen = ({navigation}) => {
   const {colors} = useTheme();
 
@@ -247,18 +299,8 @@ const MapStackScreen = ({navigation}) => {
             shadowColor: '#f9fafd',
             elevation: 30,
           },
-          headerLeft: () => (
-            <View style={{marginLeft: 10}}>
-              <FontAwesome.Button
-                name="long-arrow-left"
-                size={20}
-                backgroundColor="beige"
-                color="#333"
-                onPress={() => navigation.goBack()}
-                // onPress={() => navigation.navigate('Login')}
-              />
-            </View>
-          ),
+          headerLeft: () => GoBackBtn(navigation),
+
           // headerRight: () => (
           //   <View style={{marginRight: 10}}>
           //     <MaterialCommunityIcons.Button

@@ -24,6 +24,7 @@ export const theme = {
     LIGHT_BLUE: '#4667D1',
     BLUE: '#7666E8',
     YELLOW: '#F0C514',
+    GREEN: '#035703',
 
     DARK_PURPLE: '#7C56BE',
     DARK_BLUE: '#3B6BD0',
@@ -31,6 +32,7 @@ export const theme = {
     SKY_BLUE_DARK_OPACITY_20P: '#4E9CF933',
     SKY_BLUE: '#5BAAFB',
     ROYAL_BLUE: '#5759E5',
+    BEIGE: '#F5F5DC',
     CORNFLOWER_BLUE: '#56A0FA',
 
     DARK_PURPLE_1: '#8138D1',
@@ -61,7 +63,6 @@ export const theme = {
   },
 };
 
-
 export const dark_theme = {
   APP_COLOR: '#000000',
   BORDER_COLOR: '#5BAAFB',
@@ -73,9 +74,9 @@ export const dark_theme = {
     BG_GREY: '#25262B',
     LIGHT_GREY: '#62646D',
   },
-  GRADIENTS:{
-    PRIMARY: ['#DE29F7','#074BB9'],
+  GRADIENTS: {
+    PRIMARY: ['#DE29F7', '#074BB9'],
     SECONDARY: ['#70E0FF', '#182EF0'],
-    BUTTON: ['#8138D1', '#4A4FCE']
+    BUTTON: ['#8138D1', '#4A4FCE'],
   },
 };

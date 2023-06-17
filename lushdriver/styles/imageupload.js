@@ -1,8 +1,6 @@
 import {StyleSheet, Dimensions, StatusBar} from 'react-native';
-import {theme} from '../styles/theme';
-
-const deviceHeight = Dimensions.get('window').height;
-const deviceWidth = Dimensions.get('window').width;
+import {theme} from './theme';
+import {deviceHeight, deviceWidth} from '../utils/Dimensions';
 
 export const modalstyles = StyleSheet.create({
   container: {
@@ -186,8 +184,23 @@ export const modalstyles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 18,
     //fontFamily: 'AntDesign',
+    color: theme.COLORS.PURPLE,
+    // textTransform: 'uppercase',
+    marginLeft: 20,
+  },
+  rideDestText: {
+    fontSize: 16,
+    lineHeight: 18,
+    textDecorationLine: 'underline',
+    // fontFamily: 'Lato-Regular',
+    // color: 'green',
+    textAlign: 'center',
+    fontFamily: 'Moon-Bold',
     color: theme.COLORS.WHITE,
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
+    // color: theme.COLORS.DARK_BLUE,
+    // paddingLeft: 22,
+    // textTransform: 'uppercase',
   },
   mainDivider: {
     // height: 0.2,

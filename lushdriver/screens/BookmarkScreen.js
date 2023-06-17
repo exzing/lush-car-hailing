@@ -5,7 +5,7 @@ const BookmarkScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Bookings Screen</Text>
-      <Button title="Click Here" onPress={() => alert('Button Clicked!')} />
+      <Button title="Click Here" onPress={() => {}} />
     </View>
   );
 };

@@ -1,10 +1,13 @@
 import {StyleSheet} from 'react-native';
 import {dark_theme} from './theme';
 
-export const CommonStyles = StyleSheet.create({
+export const styles = StyleSheet.create({
   title: {
     //fontFamily: 'AntDesign',
     fontSize: 18,
+  },
+  go_back: {
+    fontSize: 10,
   },
   button_title: {
     //fontFamily: 'AntDesign',

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,7 @@ import Feather from 'react-native-vector-icons/Feather';
 // import SocialButton from '../components/SocialButton';
 import {AuthContext} from '../navigation/AuthProvider';
 import Toast from 'react-native-simple-toast';
+import {firebase} from '@react-native-firebase/database';
 // import SimpleLottie from '../components/SimpleLottie';
 
 const LoginScreen = ({navigation}) => {
@@ -31,6 +32,7 @@ const LoginScreen = ({navigation}) => {
   const [emailValidError, setEmailValidError] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [profileName, setProfileName] = useState(null);
 
   const [data, setData] = useState({
     username: '',
@@ -42,19 +44,6 @@ const LoginScreen = ({navigation}) => {
     isValidUser: true,
     isValidPassword: true,
   });
-
-  //   createUserWithEmailAndPassword(auth, email, password)
-  //   .then((userCredential) => {
-  //     // Signed in
-  //     const user = userCredential.user;
-  //     // ...
-  //   })
-  //   .catch((error) => {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // ..
-  //   });
-  // auth_signup_password.js
 
   const {login, googleLogin, fbLogin, user, error, isLoading} =
     useContext(AuthContext);
@@ -356,12 +345,7 @@ const LoginScreen = ({navigation}) => {
         {isLoading && (
           <View style={styles.preloader}>
             <ActivityIndicator size="large" color="gold" />
-            {Toast.showWithGravity(
-              `Welcome Back
-              ${user ? user.displayName : user?.email}!`,
-              Toast.LONG,
-              Toast.TOP,
-            )}
+            {Toast.showWithGravity(`Welcome Back!`, Toast.LONG, Toast.TOP)}
           </View>
         )}
 

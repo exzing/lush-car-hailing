@@ -6,10 +6,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-const Ripple = ({style = {}, children = null, ...props}) => {
-  const makeTouchable = (TouchableComponent) => {
+export const Physics = ({style = {}, children = null, ...props}) => {
+  const activate = ActiveComponent => {
     const Touchable =
-      TouchableComponent ||
+      ActiveComponent ||
       Platform.select({
         android: TouchableNativeFeedback,
         ios: TouchableHighlight,
@@ -22,7 +22,7 @@ const Ripple = ({style = {}, children = null, ...props}) => {
     return {Touchable, defaultTouchableProps};
   };
 
-  const {Touchable, defaultTouchableProps} = makeTouchable();
+  const {Touchable, defaultTouchableProps} = activate();
 
   const outerStyle = {
     borderRadius: style.borderRadius ? style.borderRadius : 0,
@@ -37,5 +37,3 @@ const Ripple = ({style = {}, children = null, ...props}) => {
     </View>
   );
 };
-
-export default Ripple;

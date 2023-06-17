@@ -22,6 +22,13 @@ import MainTabScreen from '../screens/MainTabScreen';
 import SupportScreen from '../screens/SupportScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import BookmarkScreen from '../screens/BookmarkScreen';
+import ChatApp from '../firebase_example/ChapApp';
+import {WalletScreen} from '../screens/wallets/WalletScreen';
+import {NetworkApp} from '../components/NetworkApp';
+import {NetWorkContext} from './NetworkProvider';
+import {Network} from '../components/Network';
+import {styles} from '../styles/wallet';
+import App from '../screens/wallets/components/wallet-ui/App';
 
 // import {AuthContext} from './components/context';
 
@@ -29,6 +36,7 @@ import BookmarkScreen from '../screens/BookmarkScreen';
 
 const Routes = ({navigation}) => {
   const {user, setUser} = useContext(AuthContext);
+  const {network} = useContext(NetWorkContext);
   const [initializing, setInitializing] = useState(true);
   const {colors} = useTheme();
 
@@ -44,20 +52,21 @@ const Routes = ({navigation}) => {
     setupFirebase();
   }, []);
 
-  console.log({user_: user});
+  // console.log({user});
 
-  useEffect(() => {
-    const getToken = async () => {
-      return await firebase
-        .auth()
-        ?.currentUser?.getIdTokenResult(true)
-        .then(result => {
-          // console.log({userTokenIdResult: result});
-        });
-    };
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     return await firebase
+  //       .auth()
+  //       ?.currentUser?.getIdTokenResult(true)
+  //       .then(result => {
+  //         // console.log({userTokenIdResult: result});
+  //       });
+  //   };
 
-    getToken();
-  });
+  //   getToken();
+  // });
+
   useEffect(() => {
     const onAuthStateChanged = user => {
       setUser(user);
@@ -74,7 +83,9 @@ const Routes = ({navigation}) => {
     return null;
   }
 
-  return (
+  const isConnected = network?.isConnected;
+
+  return isConnected ? (
     <Provider store={store}>
       <NavigationContainer>
         {user ? (
@@ -112,12 +123,18 @@ const Routes = ({navigation}) => {
             <Drawer.Screen name="SupportScreen" component={SupportScreen} />
             <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
             <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
+            <Drawer.Screen name="ChatScreen" component={ChatApp} />
+            {/* <Drawer.Screen name="WalletScreen" component={App} /> */}
           </Drawer.Navigator>
         ) : (
           <AuthStack />
         )}
       </NavigationContainer>
     </Provider>
+  ) : (
+    <View style={styles.container}>
+      <Network status={isConnected} />
+    </View>
   );
 };
 

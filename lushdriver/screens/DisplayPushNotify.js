@@ -9,10 +9,7 @@ import {StyleSheet} from 'react-native';
 import {theme} from '../styles/theme';
 import {firebase} from '@react-native-firebase/database';
 import LinearGradient from 'react-native-linear-gradient';
-import {
-  modalstyles,
-  modalstyles as ridestyles,
-} from '../styles/imageuploadmission';
+import {modalstyles, modalstyles as ridestyles} from '../styles/imageupload';
 import {AuthContext} from '../navigation/AuthProvider';
 import {Image} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
@@ -23,7 +20,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const CompanyIcon = require('../assets/ic_launcher_round.png');
 
-export const DisplayPushNotify = () => {
+export const DisplayPushNotify = ({show}) => {
   const navigation = useNavigation();
   const {
     user,
@@ -32,7 +29,7 @@ export const DisplayPushNotify = () => {
     riderOnlineRef,
     pickupMsg,
     destinationMsg,
-    isNotifyDialogue,
+    // isNotifyDialogue,
     setIsNotifyDialogue,
     destinationAddr,
     pickupAddr,
@@ -141,70 +138,119 @@ export const DisplayPushNotify = () => {
   };
 
   useEffect(() => {
-    if (authDriverRef) {
-      // const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
-      const _authDriverRef = firebase.database().ref('drivers/drivers_Id');
-      _authDriverRef.on('value', snap => {
+    const getDrivers = async () => {
+      const authDriverRef = firebase.database().ref(`drivers/${user?.uid}`);
+      authDriverRef.on('value', snap => {
         const data = snap.val();
-        // console.log({_data: data});
-        snap?.forEach(async childSnapshot => {
-          var childKey = childSnapshot?.key;
-          var childData = childSnapshot?.val();
-          // console.log({DchildKey: childKey});
-          // console.log({DchildData: childData});
-          // console.log({childData: childData});
-          // console.log({fcmDeviceTokens: childData?.fcmDeviceTokens});
-          // console.log({userIdToken: childData?.userIdToken});
+        console.log({
+          data,
+          RID: data?.newJourneyRID,
+          requestStatus: data?.requestStatus,
         });
-        // var childKey = snap?.key;
-        // var childData = snap?.val();
+      });
+    };
+
+    // getDrivers()
+  }, [user?.uid]);
+
+  useEffect(() => {
+    // if (authDriverRef) {
+    // const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
+    const _riderRequestRef = firebase
+      .database()
+      .ref()
+      .child(`riders/rideRequest`);
+
+    const _riderIdRef = firebase.database().ref().child(`riders/`);
+
+    // console.log({_riderIdRef, _riderRequestRef});
+
+    _riderRequestRef.on('value', snap => {
+      console.log({ridersReqSnap: snap.val()});
+    });
+    _riderIdRef.on('value', snap => {
+      // console.log({ridersIdSnap: snap.val()});
+      snap.forEach(async childSnap => {
+        let childKey = childSnap?.key;
+        let childData = childSnap?.val();
+        let fcmDeviceTokens = childData?.fcmDeviceTokens;
+        let uid = childData?.uid;
+
+        console.log({childKey, fcmDeviceTokens, uid});
+      });
+    });
+
+    const _authDriverRef = firebase.database().ref('drivers/drivers_Id');
+    _authDriverRef.on('value', snap => {
+      const data = snap.val();
+      // console.log({_data: data});
+      snap?.forEach(async childSnapshot => {
+        var childKey = childSnapshot?.key;
+        var childData = childSnapshot?.val();
         // console.log({DchildKey: childKey});
         // console.log({DchildData: childData});
-        // // console.log({rideRequest: childData.rideRequest});
-        // console.log({Demail: childData.email});
-        // console.log({DToken: childData?.fcmDeviceTokens});
-        // const _driverUserId = snap?.val()?.userIdToken;
+        // console.log({childData: childData});
+        // console.log({fcmDeviceTokens: childData?.fcmDeviceTokens});
+        // console.log({userIdToken: childData?.userIdToken});
+      });
+      // var childKey = snap?.key;
+      // var childData = snap?.val();
+      // console.log({DchildKey: childKey});
+      // console.log({DchildData: childData});
+      // // console.log({rideRequest: childData.rideRequest});
+      // console.log({Demail: childData.email});
+      // console.log({DToken: childData?.fcmDeviceTokens});
+      // const _driverUserId = snap?.val()?.userIdToken;
 
-        // setDriverUserId(_driverUserId);
-      });
-    }
+      // setDriverUserId(_driverUserId);
+    });
+    // }
     // const _riderOnlineRef = firebase.database().ref('riders');
-    if (riderOnlineRef) {
-      const _riderOnlineRef = firebase.database().ref('riders/riders_online');
-      _riderOnlineRef.on('value', snap => {
-        const data = snap.val();
-        // console.log({rider_snap: data});
-        snap?.forEach(async childSnapshot => {
-          var childKey = childSnapshot?.key;
-          var childData = childSnapshot?.val();
-          // console.log({RchildKey: childKey});
-          // console.log({rideRequest: childData.rideRequest});
-          // console.log({Remail: childData.email});
-          // console.log({childData: childData});
-          // console.log({riderUserIdToken: childData.userIdToken});
-          // console.log({rider_id: childData?.uid});
-          setRiderUserId(childData?.userIdToken);
-          setRiderUID(childData?.uid);
-          // setDriverId(childData?.rideRequest?.driver_id);
-          // setRideRequest(childData?.rideRequest);
-        });
+    // if (riderOnlineRef) {
+    const _riderOnlineRef = firebase.database().ref('riders');
+    _riderOnlineRef.on('value', snap => {
+      const data = snap.val();
+      // console.log({_rider_snap: data});
+      snap?.forEach(async childSnapshot => {
+        var childKey = childSnapshot?.key;
+        var childData = childSnapshot?.val();
+        // console.log({RchildKey: childKey});
+        // console.log({rideRequest: childData.rideRequest});
+        // console.log({Remail: childData.email});
+        // console.log({childData: childData});
+        // console.log({riderUserIdToken: childData.userIdToken});
+        // console.log({rider_id: childData?.uid});
+        setRiderUserId(childData?.userIdToken);
+        setRiderUID(childData?.uid);
+        // setDriverId(childData?.rideRequest?.driver_id);
+        // setRideRequest(childData?.rideRequest);
       });
-    }
+    });
+    // }
   }, [authDriverRef, riderOnlineRef, user.uid]);
 
   // console.log({mdriverUserId: driverUserId});
 
   const handleRideAccepted = async () => {
     // if (authDriverRef) {
-    const _riderRequestRef = firebase
-      .database()
-      .ref()
-      .child(`riders/${user?.uid}/rideRequest`);
+    // const _riderRequestRef = firebase.database().ref();
+    // .child(`riders/${user?.uid}/rideRequest`);// riders + drivers credentials....wrong
 
-    const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
+    const _authDriverIdRef = firebase.database().ref(`drivers/${user.uid}`);
+    const _authDriverRef = firebase
+      .database()
+      .ref(`drivers/drivers_Id/${user.uid}`);
+
+    _authDriverIdRef.update({
+      newJourneyRID: riderUserId,
+      requestStatus: 'accepted!',
+      online: false,
+    });
+
     _authDriverRef.update({
       newJourneyRID: riderUserId,
       requestStatus: 'accepted!',
+      online: false,
     });
 
     // riderOnlineRef.update({
@@ -215,13 +261,14 @@ export const DisplayPushNotify = () => {
 
     // await user.reload();
     setIsRideAccepted(true);
-    setIsNotifyDialogue(!isNotifyDialogue);
+    setIsNotifyDialogue(!show);
+    // setIsNotifyDialogue(!isNotifyDialogue);
     setIsLoading(false);
     Toast.showWithGravity('Ride request accepted!', Toast.LONG, Toast.TOP);
 
     navigation.navigate('MyMap', {
       screen: 'Map',
-      params: {isNotifyDialogue, destinationMsg, pickupMsg},
+      params: {show, destinationMsg, pickupMsg},
     });
   };
 
@@ -231,15 +278,29 @@ export const DisplayPushNotify = () => {
     _authDriverRef.update({
       newJourneyRID: 'waiting...',
       requestStatus: 'declined!',
+      online: true,
+    });
+    const _authDriverIdRef = firebase
+      .database()
+      .ref(`drivers/drivers_Id/${user.uid}`);
+    _authDriverIdRef.update({
+      newJourneyRID: 'waiting...',
+      requestStatus: 'declined!',
+      online: true,
+    });
+    _authDriverRef.update({
+      newJourneyRID: 'waiting...',
+      requestStatus: 'declined!',
+      online: true,
     });
     // }
 
     // await user.reload();
-    setIsNotifyDialogue(!isNotifyDialogue);
+    setIsNotifyDialogue(!show);
 
     setIsLoading(false);
 
-    Toast.showWithGravity('Ride request declined!', Toast.LONG, Toast.TOP);
+    Toast.showWithGravity('Ride declined by you!', Toast.LONG, Toast.TOP);
   };
 
   const sendNotification = async () => {
@@ -274,6 +335,9 @@ export const DisplayPushNotify = () => {
   //   );
   // }, []);
 
+  // console.log({isNotifyDialogue});
+  console.log({destinationAddr, destinationMsg});
+
   return (
     <View style={styles.container}>
       {/* <TouchableOpacity style={styles.btnNotify}>
@@ -286,7 +350,7 @@ export const DisplayPushNotify = () => {
         </Text>
       </TouchableOpacity> */}
       {isLoading === true && <RotateAnimation />}
-      {(destinationMsg ?? destinationAddr) && isNotifyDialogue && (
+      {(destinationMsg ?? destinationAddr) && show && (
         <>
           <View style={ridestyles.info}>
             {/* <Image
@@ -298,13 +362,13 @@ export const DisplayPushNotify = () => {
               <Text style={ridestyles.companyTitle}>New Ride Request</Text>
               <View style={ridestyles.tags}>
                 <Text style={ridestyles.tagText}>🚀 To: </Text>
-                <Text style={ridestyles.destText}>
+                <Text style={ridestyles.rideDestText}>
                   {destinationMsg ?? destinationAddr}
                 </Text>
               </View>
               <View style={ridestyles.tags}>
                 <Text style={ridestyles.tagText}>🚖 From: </Text>
-                <Text style={ridestyles.destText} numberOfLines={14}>
+                <Text style={ridestyles.rideDestText} numberOfLines={14}>
                   {pickupMsg ?? pickupAddr}
                 </Text>
               </View>

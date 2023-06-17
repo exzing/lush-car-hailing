@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, Button, FlatList, StyleSheet} from 'react-native';
 // import {data} from '../model/data';
-import Card from '../components/Card_';
+import Card from '../components/Card';
 // import {ScrollView, Image, Modal, Dimensions} from 'react-native';
 // import {theme} from '../styles/theme';
 // import {imagestyles} from '../styles/imageuploadmission';

@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 import Geolocation, { GeoPosition } from 'react-native-geolocation-service';
-import VIForegroundService from '@voximplant/react-native-foreground-service';
+// import VIForegroundService from '@voximplant/react-native-foreground-service';
 
 // import MapView from './MapView';
 import appConfig from '../app.json';
@@ -50,11 +50,11 @@ export default function TrackProvider({ children }) {
   const watchId = useRef<number | null>(null);
 
   const stopLocationUpdates = () => {
-    if (Platform.OS === 'android') {
-      VIForegroundService.getInstance()
-        .stopService()
-        .catch((err: any) => err);
-    }
+    // if (Platform.OS === 'android') {
+    //   VIForegroundService.getInstance()
+    //     .stopService()
+    //     .catch((err: any) => err);
+    // }
 
     if (watchId.current !== null) {
       Geolocation.clearWatch(watchId.current);
@@ -223,22 +223,22 @@ export default function TrackProvider({ children }) {
   };
 
   const startForegroundService = async () => {
-    if (Platform.Version >= 26) {
-      await VIForegroundService.getInstance().createNotificationChannel({
-        id: 'locationChannel',
-        name: 'Location Tracking Channel',
-        description: 'Tracks location of user',
-        enableVibration: false,
-      });
-    }
+    // if (Platform.Version >= 26) {
+    //   await VIForegroundService.getInstance().createNotificationChannel({
+    //     id: 'locationChannel',
+    //     name: 'Location Tracking Channel',
+    //     description: 'Tracks location of user',
+    //     enableVibration: false,
+    //   });
+    // }
 
-    return VIForegroundService.getInstance().startService({
-      channelId: 'locationChannel',
-      id: 420,
-      title: appConfig.displayName,
-      text: 'Tracking location updates',
-      icon: 'ic_launcher',
-    });
+    // return VIForegroundService.getInstance().startService({
+    //   channelId: 'locationChannel',
+    //   id: 420,
+    //   title: appConfig.displayName,
+    //   text: 'Tracking location updates',
+    //   icon: 'ic_launcher',
+    // });
   };
 
   return (

@@ -1,3 +1,7 @@
+// import 'react-native-get-random-values';
+// import '@ethersproject/shims';
+// import {ethers} from 'ethers';
+// import {Client, Wallet, xrpToDrops, dropsToXrp} from 'xrpl';
 import React, {
   useCallback,
   useContext,
@@ -31,19 +35,21 @@ import * as Animatable from 'react-native-animatable';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 import {theme} from '../styles/theme';
-import {getCurrentLocation, locationPermission} from '../helper/helperFunction';
+import {getCurrentLocation, locationPermission} from '../helper/location';
 import Geocoder from 'react-native-geocoding';
 import {AuthContext} from '../navigation/AuthProvider';
 import messaging from '@react-native-firebase/messaging';
 import NotificationService from '../components/NotificationService';
 import {DisplayPushNotify} from './DisplayPushNotify';
 import RotateAnimation from '../components/RotateAnimation';
-import {modalstyles} from '../styles/imageuploadmission';
+import {modalstyles} from '../styles/imageupload';
 import GeoFire from 'geofire';
 import {firebase} from '@react-native-firebase/database';
-import VIForegroundService from '@voximplant/react-native-foreground-service';
+// import VIForegroundService from '@voximplant/react-native-foreground-service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-simple-toast';
+import {storage_keys} from '../storage.keys';
+// import {Networks, useIsConnected, XRPLClient} from '@nice-xrpl/react-xrpl';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -81,9 +87,12 @@ const HomeScreen = ({navigation, route}) => {
   const [riderId, setRiderId] = useState(null);
   const [rideRequest, setRideRequest] = useState(null);
   const [journeyStatus, setJourneyStatus] = useState(null);
+  const [orderedRide, setOrderedRide] = useState(null);
+  // const [client] = useState(new Client('wss://s.altnet.rippletest.net:51233'));
 
   // authDriverRef,
   // authDriverVehicleRef,
+  // console.log('reading wallet..');
   const {
     user,
     currentPosition,
@@ -91,186 +100,82 @@ const HomeScreen = ({navigation, route}) => {
     geoFireDriverRef,
     deviceToken,
     riderOnlineRef,
+    isNotifyDialogue,
+    wallet,
+    pushedMessage,
   } = useContext(AuthContext);
 
   const UploadMission = require('../assets/image_upload_mission_test.png');
   const CompanyIcon = require('../assets/ic_launcher_round.png');
 
-  // return (
-  //   <ScrollView style={styles.container}>
-  //     <StatusBar barStyle={theme.dark ? 'light-content' : 'dark-content'} />
-  //     {/* <View style={styles.sliderContainer}>
-  //       <Swiper
-  //         autoplay
-  //         horizontal={false}
-  //         height={200}
-  //         activeDotColor="#FF6347">
-  //         <View style={styles.slide}>
-  //           <Image
-  //             source={require('../assets/banners/car-banner1.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.sliderImage}
-  //           />
-  //         </View>
-  //         <View style={styles.slide}>
-  //           <Image
-  //             source={require('../assets/banners/car-banner2.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.sliderImage}
-  //           />
-  //         </View>
-  //         <View style={styles.slide}>
-  //           <Image
-  //             source={require('../assets/banners/car-banner3.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.sliderImage}
-  //           />
-  //         </View>
-  //       </Swiper>
-  //     </View> */}
+  // console.log({isNotifyDialogue});
 
-  //     <View style={styles.categoryContainer}>
-  //       <TouchableOpacity
-  //         style={styles.categoryBtn}
-  //         onPress={() =>
-  //           navigation.navigate('CardListScreen', {title: 'Body Wash'})
-  //         }>
-  //         <View style={styles.categoryIcon}>
-  //           <Ionicons name="car-sport" size={35} color="#FF6347" />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Body Wash</Text>
-  //       </TouchableOpacity>
-  //       <TouchableOpacity
-  //         style={styles.categoryBtn}
-  //         onPress={() =>
-  //           navigation.navigate('CardListScreen', {title: 'Interior Cleansing'})
-  //         }>
-  //         <View style={styles.categoryIcon}>
-  //           <MaterialCommunityIcons
-  //             name="car-multiple"
-  //             size={35}
-  //             color="#FF6347"
-  //           />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Interior Cleansing</Text>
-  //       </TouchableOpacity>
-  //       <TouchableOpacity style={styles.categoryBtn} onPress={() => {}}>
-  //         <View style={styles.categoryIcon}>
-  //           <MaterialCommunityIcons name="car-wash" size={35} color="#FF6347" />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Snacks Corner</Text>
-  //       </TouchableOpacity>
-  //     </View>
-  //     <View style={[styles.categoryContainer, {marginTop: 10}]}>
-  //       <TouchableOpacity style={styles.categoryBtn} onPress={() => {}}>
-  //         <View style={styles.categoryIcon}>
-  //           <Fontisto name="hotel" size={35} color="#FF6347" />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Hotels</Text>
-  //       </TouchableOpacity>
-  //       <TouchableOpacity style={styles.categoryBtn} onPress={() => {}}>
-  //         <View style={styles.categoryIcon}>
-  //           <Ionicons name="md-restaurant" size={35} color="#FF6347" />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Dineouts</Text>
-  //       </TouchableOpacity>
-  //       <TouchableOpacity style={styles.categoryBtn} onPress={() => {}}>
-  //         <View style={styles.categoryIcon}>
-  //           <MaterialIcons name="expand-more" size={35} color="#FF6347" />
-  //         </View>
-  //         <Text style={styles.categoryBtnTxt}>Show More</Text>
-  //       </TouchableOpacity>
-  //     </View>
+  // const isConnected = useIsConnected();
+  // console.log({isConnected});
 
-  //     <View style={styles.cardsWrapper}>
-  //       <Text
-  //         style={{
-  //           alignSelf: 'center',
-  //           fontSize: 18,
-  //           fontWeight: 'bold',
-  //           color: '#333',
-  //         }}>
-  //         Recently Viewed
-  //       </Text>
-  //       <View style={styles.card}>
-  //         <View style={styles.cardImgWrapper}>
-  //           <Image
-  //             source={require('../assets/banners/food-banner2.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.cardImg}
-  //           />
-  //         </View>
-  //         <View style={styles.cardInfo}>
-  //           <Text style={styles.cardTitle}>Amazing Food Place</Text>
-  //           <StarRating ratings={4} reviews={99} />
-  //           <Text style={styles.cardDetails}>
-  //             Amazing description for this amazing place
-  //           </Text>
-  //         </View>
-  //       </View>
-  //       <View style={styles.card}>
-  //         <View style={styles.cardImgWrapper}>
-  //           <Image
-  //             source={require('../assets/banners/food-banner3.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.cardImg}
-  //           />
-  //         </View>
-  //         <View style={styles.cardInfo}>
-  //           <Text style={styles.cardTitle}>Amazing Food Place</Text>
-  //           <StarRating ratings={4} reviews={99} />
-  //           <Text style={styles.cardDetails}>
-  //             Amazing description for this amazing place
-  //           </Text>
-  //         </View>
-  //       </View>
-  //       <View style={styles.card}>
-  //         <View style={styles.cardImgWrapper}>
-  //           <Image
-  //             source={require('../assets/banners/food-banner4.jpg')}
-  //             resizeMode="cover"
-  //             style={styles.cardImg}
-  //           />
-  //         </View>
-  //         <View style={styles.cardInfo}>
-  //           <Text style={styles.cardTitle}>Amazing Food Place</Text>
-  //           <StarRating ratings={4} reviews={99} />
-  //           <Text style={styles.cardDetails}>
-  //             Amazing description for this amazing place
-  //           </Text>
-  //         </View>
-  //       </View>
-  //     </View>
-  //   </ScrollView>
-  // );
   const pickupRef = useRef();
   const destRef = useRef(null);
   const watchId = useRef(null);
 
-  // useEffect(() => {
-  //   return () => {
-  //     removeLocationUpdates();
-  //   };
-  // }, [removeLocationUpdates]);
+  // const createWallet = async () => {
+  //   const altnet = new Client('wss://s.altnet.rippletest.net:51233');
+  //   // const devnet = new Client('wss://s.devnet.rippletest.net:51233');
+  //   // const api = new Client('wss://xrplcluster.com');
+  //   console.log('starting connection...');
+  //   await altnet.disconnect();
+  //   // await api.connect();
+  //   // let response = await api.request({
+  //   //   command: 'ledger',
+  //   //   'ledger_index ': 'validated',
+  //   //   transactions: true,
+  //   // });
+  //   // console.log({response});
+  //   // if (altnet) {
+  //   //   await altnet.connect();
+  //   // }
 
-  // useEffect(() => {
-  //   getFCMToken();
-  //   requestPermission();
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log('remoteMessage', JSON.stringify(remoteMessage));
-  //     DisplayNotification(remoteMessage);
-  //     // Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  //   });
-  //   return unsubscribe;
-  // }, []);
+  //   // let isConnected = altnet.isConnected();
 
-  // const getFCMToken = () => {
-  //   messaging()
-  //     .getToken()
-  //     .then(token => {
-  //       console.log('token=>>>', token);
-  //     });
+  //   // console.log({isConnected});
+  //   // console.log({altnet, devnet});
+
+  //   // if (isConnected === true) {
+  //   //   console.log('its true!');
+
+  //   //   // create the wallet
+  //   //   let wallet = Wallet.generate();
+
+  //   //   console.log({wallet});
+  //   //   altnet.disconnect();
+
+  //   //   // altnet.fundWallet().then(fund_result => {
+  //   //   //   console.log({fund_result});
+  //   //   //   // setBalance(fund_result.balance);
+  //   //   //   // setWallet(fund_result.wallet);
+  //   //   //   // setPaymentButtonText("Send a 22 XRP Payment!");
+  //   //   // });
+  //   // } else {
+  //   //   console.log('its false');
+  //   // }
   // };
+
+  useEffect(() => {
+    // console.log({pushedMessage, data: pushedMessage?.data});
+    if (pushedMessage) {
+      let message = pushedMessage?.data.abortMessage;
+      let title = pushedMessage?.notification?.title;
+      console.log({title, message});
+      title === 'Ride Cancellation Notification!'
+        ? Toast.showWithGravity(message, Toast.LONG, Toast.TOP)
+        : null;
+    }
+
+    // if (pushedMessage !== null) {
+    //   alert('YOO');
+    // } else {
+    //   alert('Nope');
+    // }
+  }, [pushedMessage]);
 
   const requestPermission = async () => {
     const authStatus = await messaging().requestPermission();
@@ -318,12 +223,6 @@ const HomeScreen = ({navigation, route}) => {
   //   ]);
   // }, []);
 
-  const onSend = useCallback((messages = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages),
-    );
-  }, []);
-
   const _getCurrentPosition = async () => {
     Geocoder.init(keys.GOOGLE_MAP_APIKEY); // initialized with a valid API key
     const status = await locationPermission();
@@ -332,7 +231,7 @@ const HomeScreen = ({navigation, route}) => {
       console.log('Location Permission granted!');
       console.log({currentLoc: location});
       // setCoordinates(loc);
-      setCurrentPosition(location);
+
       Geocoder.from({
         latitude: location.latitude,
         longitude: location.longitude,
@@ -352,8 +251,6 @@ const HomeScreen = ({navigation, route}) => {
       console.log('Permission not grantedd!');
     }
   };
-
-  // console.log({currentPosition_: currentPosition});
 
   const setInitialAddr = async () => {
     if (!currentPosition) return;
@@ -521,10 +418,11 @@ const HomeScreen = ({navigation, route}) => {
     if (riderOnlineRef) {
       riderOnlineRef.on('value', snap => {
         const data = snap.val();
-        // console.log({rider_snap: data});
+        console.log({rider_snap: data});
         snap?.forEach(async childSnapshot => {
           var childKey = childSnapshot?.key;
           var childData = childSnapshot?.val();
+          // console.log({orderedRide: childData?.orderedRide});
           // console.log({RchildKey: childKey});
           // console.log({rideRequest: childData.rideRequest});
           // console.log({Remail: childData.email});
@@ -532,148 +430,152 @@ const HomeScreen = ({navigation, route}) => {
           // console.log({riderUserIdToken: childData.userIdToken});
           // console.log({driver_id: childData?.rideRequest?.driver_id});
           setRiderId(childData?.userIdToken);
+          setOrderedRide(childData?.orderedRide);
           // setDriverId(childData?.rideRequest?.driver_id);
           // setRideRequest(childData?.rideRequest);
         });
       });
     }
   }, [riderOnlineRef]);
+  // console.log({orderedRide});
 
   useEffect(() => {
-    if (authDriverRef) {
-      const _authDriverRef = firebase.database().ref(`drivers/${user?.uid}`);
-      const _authDriverIdRef = firebase
-        .database()
-        .ref(`drivers/drivers_Id/${user?.uid}`);
+    const _authDriverRef = firebase.database().ref(`drivers/${user?.uid}`);
+    const _authDriverIdRef = firebase
+      .database()
+      .ref(`drivers/drivers_Id/${user?.uid}`);
 
-      _authDriverRef.on('value', async snap => {
-        const data = snap.val();
-        const newJourney = data?.newJourneyRID;
-        // const _driverUserId = snap.val().userIdToken;
-        // const _requestStatus = snap.val().requestStatus;
-        // setDriverUserId(_driverUserId);
-        // setRequestStatus(_requestStatus);
-        // console.log({data: data});
-        // console.log({newJourney: newJourney}); //..E38A
-        // console.log({riderId: riderId});
-        if (
-          newJourney === 'waiting...' ||
-          newJourney === riderId
-          // newJourney === 'accepted!'
-        ) {
-          setJourneyStatus(newJourney);
-          // alert('waiting...');
-          setIsOnline(true);
-          await _authDriverIdRef.update({
-            online: true,
-          });
-        } else {
-          // alert('none');
-          setIsOnline(false);
-          await _authDriverIdRef.update({
-            online: false,
-          });
-        }
-      });
-    }
-  }, [authDriverRef, isOnline, riderId, user]);
+    _authDriverIdRef.on('value', async snap => {
+      const data = snap.val();
+      // console.log({data});
+      const newJourney = data?.newJourneyRID;
+      const requestStatus = data?.requestStatus;
+      const onlineStatus = data?.online;
+
+      onlineStatus === true ? setIsOnline(true) : setIsOnline(false);
+      // const _driverUserId = snap.val().userIdToken;
+      // const _requestStatus = snap.val().requestStatus;
+      // setDriverUserId(_driverUserId);
+      // setRequestStatus(_requestStatus);
+      // console.log({data: data});
+      // console.log({newJourney: newJourney}); //..E38A
+      // console.log({riderId: riderId});
+
+      // if (
+      //   newJourney === 'waiting...' ||
+      //   newJourney === riderId
+      //   // requestStatus === 'declined!'
+      // ) {
+      //   // setJourneyStatus(newJourney);
+      //   setIsOnline(true);
+      //   await _authDriverIdRef.update({
+      //     online: true,
+      //   });
+      // } else {
+      //   // alert('none');
+      //   setIsOnline(false);
+      //   await _authDriverIdRef.update({
+      //     online: false,
+      //   });
+      // }
+      // console.log({requestStatus, isOnline});
+    });
+  }, [isOnline, riderId, user]);
 
   // console.log({_riderId: riderId});
 
   const toggleAvailability = async () => {
-    const onlineStorage = await AsyncStorage.getItem('@online_key');
-    AsyncStorage.setItem('@online_key', `${isOnline}`);
-    setIsOnline(previousState => !previousState);
-    // console.log({onlineStorage: onlineStorage, isOnline: isOnline});
+    try {
+      await AsyncStorage.getItem(storage_keys.drivers);
+      AsyncStorage.setItem(storage_keys.drivers, `${isOnline}`);
+      setIsOnline(previousState => !previousState);
+    } catch (error) {
+      return null;
+    }
   };
 
-  // useEffect(() => {
-  //   console.log({
-  //     authDRef: authDriverRef,
-  //     geoFireDriverRef: geoFireDriverRef,
-  //     deviceToken: deviceToken,
-  //     riderOnlineRef: riderOnlineRef,
-  //   });
-  // });
-
   const goOnline = async () => {
-    if (currentPosition && authDriverRef && geoFireDriverRef && user) {
-      const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
-      const _authDriverIdRef = firebase
-        .database()
-        .ref(`drivers/drivers_Id/${user?.uid}`);
-      console.log('updating geofire data for', user.uid);
+    // if (currentPosition && authDriverRef && geoFireDriverRef && user) {
+    const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
+    const _authDriverIdRef = firebase
+      .database()
+      .ref(`drivers/drivers_Id/${user?.uid}`);
+    console.log('updating geofire data for', user.uid);
 
-      const lat = currentPosition.latitude;
-      const long = currentPosition.longitude;
-      console.log({lat: lat, long: long, useruid: user.uid});
+    const lat = currentPosition?.latitude;
+    const long = currentPosition?.longitude;
+    console.log({lat, long, useruid: user.uid});
 
-      await geoFireDriverRef.set(user.uid, [lat, long]).then(value => {
-        console.log({value: value});
+    await geoFireDriverRef.set(user?.uid, [lat, long]).then(value => {
+      // console.log({value: value});
+    });
+    await _authDriverIdRef.update({
+      online: true,
+      newJourneyRID: 'waiting...',
+      requestStatus: 'none',
+    });
+    await _authDriverRef
+      .update({
+        newJourneyRID: 'waiting...',
+        requestStatus: 'none',
+      })
+      .then(value => {
+        // console.log({value});
+        if (value === null) {
+          // setIsOnline(true);
+          setIsOnline(previousState => !previousState);
+          setModalVisible(!modalVisible);
+          // setIsLoading(false);
+        }
       });
-      await _authDriverIdRef.update({
-        online: true,
-      });
-      await _authDriverRef
-        .update({
-          newJourneyRID: 'waiting...',
-          requestStatus: 'none',
-        })
-        .then(value => {
-          console.log({_value: value});
-          if (value === null) {
-            // setIsOnline(true);
-            setIsOnline(previousState => !previousState);
-            setModalVisible(!modalVisible);
-            // setIsLoading(false);
-          }
-        });
-      setIsLoading(false);
-      Toast.showWithGravity(
-        ` 🤝 Thank You ${user.displayName}. Expect a ride request now!`,
-        Toast.LONG,
-        Toast.TOP,
-      );
-      // navigation.navigate('MyMap', {
-      //   screen: 'Map',
-      //   params: {currentPosition, isOnline},
-      // });
-    }
+    setIsLoading(false);
+    Toast.showWithGravity(
+      ` 🤝 Thank You ${user.displayName}. Expect a ride request now!`,
+      Toast.LONG,
+      Toast.TOP,
+    );
+    // navigation.navigate('MyMap', {
+    //   screen: 'Map',
+    //   params: {currentPosition, isOnline},
+    // });
+    // }
     // getLocationUpdates();
   };
   const goOffline = async () => {
-    if (currentPosition && authDriverRef && geoFireDriverRef && user) {
-      const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
-      const _authDriverIdRef = firebase
-        .database()
-        .ref(`drivers/drivers_Id/${user?.uid}`);
-      await geoFireDriverRef.remove(user.uid, ref => {
-        console.log('0ffRef:', ref);
-        // if (ref === null) {
-        //   setIsLoading(false);
-        //   setIsOnline(false);
-        //   setModalVisible(!modalVisible);
-        // }
+    // if (currentPosition && authDriverRef && geoFireDriverRef && user) {
+    const _authDriverRef = firebase.database().ref(`drivers/${user.uid}`);
+    const _authDriverIdRef = firebase
+      .database()
+      .ref(`drivers/drivers_Id/${user?.uid}`);
+    await geoFireDriverRef.remove(user?.uid, ref => {
+      console.log('0ffRef:', ref);
+      // if (ref === null) {
+      //   setIsLoading(false);
+      //   setIsOnline(false);
+      //   setModalVisible(!modalVisible);
+      // }
+    });
+    await _authDriverIdRef.update({
+      online: false,
+      newJourneyRID: 'none',
+      requestStatus: 'none',
+    });
+    await _authDriverRef
+      .update({
+        newJourneyRID: 'none',
+        requestStatus: 'none',
+      })
+      .then(offValue => {
+        console.log({offValue: offValue});
+        if (offValue === null) {
+          setIsLoading(false);
+          // setIsOnline(false);
+          setIsOnline(previousState => !previousState);
+          setModalVisible(!modalVisible);
+        }
       });
-      await _authDriverIdRef.update({
-        online: false,
-      });
-      await _authDriverRef
-        .update({
-          newJourneyRID: 'none',
-          requestStatus: 'none',
-        })
-        .then(offValue => {
-          console.log({offValue: offValue});
-          if (offValue === null) {
-            setIsLoading(false);
-            // setIsOnline(false);
-            setIsOnline(previousState => !previousState);
-            setModalVisible(!modalVisible);
-          }
-        });
-      console.log({isOnline: isOnline});
-    }
+    // console.log({isOnline: isOnline});
+    // }
   };
 
   // const getLocationUpdates = async () => {
@@ -746,6 +648,26 @@ const HomeScreen = ({navigation, route}) => {
   //   VIForegroundService.stopService().catch(err => err);
   // }, []);
 
+  useEffect(() => {
+    // console.log({isOnline, currentPosition, geoFireDriverRef, authDriverRef});
+  }, [authDriverRef, currentPosition, geoFireDriverRef, isOnline]);
+
+  // useEffect(() => {
+  //   orderedRide === 'cancelled'
+  //     ? Toast.showWithGravity(
+  //         ` 😢 Ride cancelled! Please sit tight ${user.displayName}. Expect a ride request now!`,
+  //         Toast.LONG,
+  //         Toast.TOP,
+  //       )
+  //     // : // : orderedRide === 'initiated'
+  //     //   // ? Toast.showWithGravity(
+  //     //   //     ` 😍 Incoming ride request!`,
+  //     //   //     Toast.LONG,
+  //     //   //     Toast.TOP,
+  //     //   //   )
+  //     //   null;
+  // }, [orderedRide, user.displayName]);
+
   return (
     <Screen style={tw`bg-black h-full`}>
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
@@ -771,6 +693,7 @@ const HomeScreen = ({navigation, route}) => {
             <TouchableOpacity
               onPress={() => {
                 setModalVisible(true);
+                // createWallet();
               }}>
               <LinearGradient
                 start={{x: 0, y: 0}}
@@ -845,7 +768,10 @@ const HomeScreen = ({navigation, route}) => {
             // start={{x: 0.5, y: 0}}
             // colors={['#191919', '#f9d29d', 'red']}
             style={styles.modal}>
-            <DisplayPushNotify />
+            {/* {orderedRide === 'initiated' && (
+              <DisplayPushNotify show={isNotifyDialogue} />
+            )} */}
+            {/* <DisplayPushNotify show={isNotifyDialogue} /> */}
           </LinearGradient>
         </Animatable.View>
         <Image

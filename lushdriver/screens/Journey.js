@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/self-closing-comp */
 import React, {Component, useContext, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
@@ -21,31 +23,16 @@ import MapViewDirections from 'react-native-maps-directions';
 import {keys} from '../env';
 import {AuthContext} from '../navigation/AuthProvider';
 import {calculateFares} from '../utils/EstimateFares';
-// import * as Animatable from 'react-native-animatable';
-// import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import {getCurrentLocation, locationPermission} from '../helper/helperFunction';
-// import Animated from 'react-native-reanimated';
-// import PropTypes from 'prop-types';
-// import Button from '../components/Button';
-// import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
-// import {theme} from '../styles/theme';
-// import ModalActivityIndicator from '../components/ModalActivityIndicator';
-// import ImageUploadMission from '../components/ImageUploadMission';
 import RotateAnimation from '../components/RotateAnimation';
-import {modalstyles} from '../styles/imageuploadmission';
+import {modalstyles} from '../styles/imageupload';
 import GeoFire from 'geofire';
 import {firebase} from '@react-native-firebase/database';
-// import Geolocation from 'react-native-geolocation-service';
-// import {mapStyle} from '../styles/mapStyle';
-// import {data} from '../utils/data';
 import {getRegion} from '../rnchat/src/helpers/map';
-// import moment from 'moment';
 import {journeystyles} from '../rnchat/MarkerApp';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {TrackContext} from './GeoMarker';
 
 const carMarker = require('../assets/car144.png');
-// const carMarker = require('../assets/carMarker.png');
+const goldcar = require('../assets/goldcar.png');
 
 // const CompanyIcon = require('../assets/ic_launcher_round.png');
 const userPhoto = require('../assets/users/user_icon.png');
@@ -123,152 +110,75 @@ export const Journey = ({route, navigation}) => {
   const [nearbyDrivers, setNearbyDrivers] = useState([]);
   const mapRef = useRef();
 
-  const cancelRideOrder = async () => {
-    const canceOrderRef = firebase
-      .database()
-      .ref()
-      .child(`riders/${user?.uid}/rideRequest`);
-
-    await canceOrderRef.remove(res => {
-      if (res === null) {
-        console.log({res: res});
-        console.log('Operation Completed!');
-        setIsLoading(false);
-        setIsSetSuccess(true);
-        // setDistance(0)
-        setCoordinates([
-          {latitude: 0.0, longitude: 0.0},
-          {latitude: 0.0, longitude: 0.0},
-        ]);
-        // initializedMap();
-
-        // navigation.goBack();
-        // setIsCancel(false);
-      }
-      // res === null && setIsLoading(false) && setIsCancel(false);
-    });
-
-    // resetCoord();
-
-    // && setDistance(0) && setDuration(0);
-
-    // navigation.goBack();
-    // navigation.navigate('Homely', {duration: 0, distance: 0});
-  };
-
-  const createRideOrder = async () => {
-    // setDialogueOpen(true);
-    // console.log({isLoading: isLoading});
-
-    const riderRequestRef = firebase
-      .database()
-      .ref()
-      .child(`riders/${user?.uid}/rideRequest`);
-
-    // const pickup = coordinates[0].latitude
-    const pickupMap = {
-      latitude: nearbyDriversLoc[0]?.latitude.toString(),
-      longitude: nearbyDriversLoc[0]?.longitude.toString(),
-    };
-
-    const destinationMap = {
-      latitude: nearbyDriversLoc[1]?.latitude.toString(),
-      longitude: nearbyDriversLoc[1]?.longitude.toString(),
-    };
-
-    const rideMap = {
-      createdAt: firebase.database().getServerTime(),
-      // 'rider_name': currentUserInfo!.displayName,
-      // 'rider_phone': currentUserInfo.phoneNumber,
-      rider_email_address: user?.email,
-      destination_address: route.params?.destination?.description,
-      pickup_address: route.params?.origin?.description,
-      location: pickupMap,
-      destination: destinationMap,
-      payment_method: 'cash',
-      driver_id: 'waiting',
-    };
-
-    await riderRequestRef.set(rideMap, error => {
-      // if (error) console.error(error);
-      console.log({complete: error});
-      if (error === null) {
-        setIsLoading(false);
-        setIsSetSuccess(true);
-        // alert('Successfull!');
-      }
-    });
-
-    // await riderRequestRef?.set(rideMap).then(res => console.log({res_: res}));
-
-    setIsLoading(false);
-  };
   const [profileIndex, setProfileIndex] = useState(0);
   const [profiles, setProfiles] = useState([]);
   const [dynamicLoc, setDynamicAddr] = useState([]);
 
-  useEffect(() => {
-    const getFares = (_distance, _duration) => {
-      const fares = calculateFares(_distance, _duration);
-      setCharge(parseFloat(fares));
-      return fares;
-    };
+  // useEffect(() => {
+  //   const getFares = (_distance, _duration) => {
+  //     const fares = calculateFares(_distance, _duration);
+  //     setCharge(parseFloat(fares));
+  //     return fares;
+  //   };
 
-    // getFares(distance, duration);
-  }, [distance, duration]);
+  //   // getFares(distance, duration);
+  // }, [distance, duration]);
 
   // get params
   useEffect(() => {
-    const getRideParams = () => {
+    try {
       console.log({
-        rideDestination: rideDestination,
-        rideLocation: rideLocation,
-        destinationGeoMsg: destinationGeoMsg,
-        pickupGeoMsg: pickupGeoMsg,
+        rideDestination,
+        rideLocation,
+        destinationGeoMsg,
+        pickupGeoMsg,
         // _Mylocation: location,
       });
-      // if (!route.params) return;
-      // console.log({route_params: route.params});
-      // console.log({origin_desc: route?.params?.origin?.description});
-      // console.log({origin_lat: route?.params?.origin?.location?.latitude});
-      // console.log({origin_lng: route?.params?.origin?.location?.longitude});
-      // console.log({dest_desc: route?.params?.destination?.description});
-      // console.log({dest_lat: route?.params?.destination?.destination?.lat});
-      // console.log({dest_lng: route?.params?.destination?.destination?.lng});
-
+      if (
+        !rideLocation &&
+        !pickupGeoMsg &&
+        !rideDestination &&
+        !destinationGeoMsg &&
+        !pickupAddr &&
+        !destinationAddr &&
+        !rideFare &&
+        !fareMsg &&
+        !distanceMsg
+      ) {
+        return;
+      }
       setCoordinates([
         {
-          latitude:
-            Number(rideLocation?.latitude) ?? Number(pickupGeoMsg.latitude),
-          longitude:
-            Number(rideLocation?.longitude) ?? Number(pickupGeoMsg.longitude),
+          latitude: Number(JSON.parse(pickupGeoMsg)?.latitude) || 0.0,
+          // Number(rideLocation?.latitude),
+          longitude: Number(JSON.parse(pickupGeoMsg)?.longitude) || 0.0,
+          // Number(rideLocation?.longitude)
         },
         {
-          latitude:
-            Number(rideDestination?.latitude) ??
-            Number(destinationGeoMsg.latitude),
-          longitude:
-            Number(rideDestination?.longitude) ??
-            Number(destinationGeoMsg.longitude),
+          latitude: Number(JSON.parse(destinationGeoMsg)?.latitude) || 0.0,
+          // Number(rideDestination?.latitude),
+          longitude: Number(JSON.parse(destinationGeoMsg)?.longitude) ?? 0.0,
+          // Number(rideDestination?.longitude),
         },
       ]);
-    };
-    getRideParams();
+    } catch (error) {}
   }, [
+    destinationAddr,
     destinationGeoMsg,
+    distanceMsg,
+    fareMsg,
+    pickupAddr,
     pickupGeoMsg,
     rideDestination,
-    rideDestination?.latitude,
-    rideDestination?.longitude,
+    rideFare,
     rideLocation,
-    rideLocation?.latitude,
-    rideLocation?.longitude,
-    route,
   ]);
 
   //modal timeout
   useEffect(() => {
-    if (!isSetSuccess) return;
+    if (!isSetSuccess) {
+      return;
+    }
 
     const timeout = setTimeout(() => {
       setIsSetSuccess(false);
@@ -309,12 +219,6 @@ export const Journey = ({route, navigation}) => {
 
     // getProfiles(user.uid, 10);
   }, [user.uid, profiles, distance]);
-
-  const nextCard = () => {
-    setProfileIndex(profileIndex + 1);
-  };
-
-  const marker = null || undefined;
 
   //geo
   useEffect(() => {
@@ -361,11 +265,13 @@ export const Journey = ({route, navigation}) => {
   }, [currentPosition, user]);
 
   console.log({
-    rideDistance: rideDistance,
-    isNotifyDialogue: isNotifyDialogue,
-    pickupMsg: pickupMsg,
-    destinationMsg: destinationMsg,
-    nearbyDrivers: nearbyDrivers,
+    rideDistance,
+    isNotifyDialogue,
+    pickupMsg,
+    destinationMsg,
+    nearbyDrivers,
+    pickupAddr,
+    destinationAddr,
   });
 
   useEffect(() => {
@@ -379,6 +285,17 @@ export const Journey = ({route, navigation}) => {
     });
   }, [mapRef, currentPosition]);
 
+  // console.log({newPosition, coordinates});
+  console.log({
+    // lat: JSON.parse(destinationGeoMsg)?.latitude,
+    // long: JSON.parse(destinationGeoMsg)?.longitude,
+    lat: destinationGeoMsg?.latitude,
+    long: Number(JSON.stringify(destinationGeoMsg))?.longitude,
+    lat2: destinationGeoMsg?.latitude,
+    long2: destinationGeoMsg?.longitude,
+    coordinates,
+    riderUserName,
+  });
   return (
     <>
       <View style={modalstyles.container}>
@@ -393,44 +310,78 @@ export const Journey = ({route, navigation}) => {
             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
             // customMapStyle={mapStyle}
           >
-            <Marker
-              title="I am here"
-              pinColor="skyblue"
-              description="My Destination Location"
-              coordinate={coordinates[1]}
-            />
-            <Marker
-              title="I am here"
-              pinColor="purple"
-              description="My Current= Location"
-              coordinate={coordinates[0]}
-            />
-            {nearbyDrivers.map((geom, index) => {
-              console.log({geom: geom});
-
-              return (
+            {coordinates[0] && coordinates[1] && (
+              <>
                 <Marker
-                  // ref={mapRef}
-                  key={index}
-                  identifier={'marker_' + index}
-                  image={carMarker}
-                  // coordinate={{latitude: 4.3, longitude: 7.5}}
-                  coordinate={{latitude: geom.l[0], longitude: geom.l[1]}}>
-                  {/* coordinate={{latitude: geom[0], longitude: geom[1]}}> */}
-                  <Callout>
-                    <View>
-                      {/* <Text>{text}</Text>
-                    <Text style={{color: '#999'}}>
-                      {moment(timestamp).fromNow()}
-                    </Text> */}
-                    </View>
-                  </Callout>
-                </Marker>
-              );
-            })}
-            {/* {coordinates.map((coordinate, index) => (
-              <Marker key={`coordinate_${index}`} coordinate={coordinate} />
-            ))} */}
+                  title="I am here"
+                  pinColor="skyblue"
+                  description="My Destination Location"
+                  coordinate={{
+                    latitude: coordinates[1]?.latitude || 4.331,
+                    longitude: coordinates[1]?.longitude || 8.005,
+                  }}
+                  // coordinate={{
+                  //   latitude: 4.3317876,
+                  //   longitude: 8.0054812,
+                  // }}
+                />
+                <Marker
+                  title="I am here"
+                  pinColor="purple"
+                  description="My Current Location"
+                  // coordinate={coordinates[0]}
+                  coordinate={{
+                    latitude: coordinates[0]?.latitude || 4.471,
+                    longitude: coordinates[0]?.longitude || 8.005,
+                  }}
+                  // latitude: 4.471707,
+                  // longitude: 8.0053769,
+                />
+              </>
+            )}
+            {nearbyDrivers &&
+              nearbyDrivers?.map((geom, index) => {
+                console.log({geom: geom});
+
+                return (
+                  <Marker
+                    // ref={mapRef}
+                    anchor={{x: 0.5, y: 0.6}}
+                    key={index}
+                    identifier={'marker_' + index}
+                    // image={carMarker}
+                    coordinate={{
+                      latitude: geom.l[0],
+                      longitude: geom.l[1],
+                    }}
+                    flat
+                    style={{
+                      ...(currentPosition?.heading !== -1 && {
+                        transform: [
+                          {
+                            rotate: `${currentPosition?.heading}deg`,
+                          },
+                        ],
+                      }),
+                    }}>
+                    <Image
+                      resizeMode="contain"
+                      style={{
+                        height: 40,
+                        width: 40,
+                        // top: 20,
+                        transform: [
+                          {
+                            rotate: '270deg',
+                            // rotate: coords.heading === undefined ? '0deg' : `${coords.heading}deg`,
+                          },
+                        ],
+                      }}
+                      source={goldcar}
+                    />
+                  </Marker>
+                );
+              })}
 
             {coordinates.length > 0 && (
               <MapViewDirections
@@ -518,7 +469,7 @@ export const Journey = ({route, navigation}) => {
                   </View>
                   <View style={journeystyles.tag}>
                     <Text style={journeystyles.tagText}>
-                      {fareMsg ?? (rideFare && rideFare)}
+                      {fareMsg ?? rideFare}
                     </Text>
                   </View>
                 </View>
@@ -557,7 +508,7 @@ export const Journey = ({route, navigation}) => {
                     '#8000FF',
                   ]}
                   style={journeystyles.btnJourney}>
-                  <Text style={modalstyles.stakeButtonText}>Arrived</Text>
+                  <Text style={modalstyles.stakeButtonText}>Got a Rider</Text>
                 </LinearGradient>
               </TouchableOpacity>
               {isCancel === true && (

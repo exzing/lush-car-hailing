@@ -5,8 +5,9 @@
  * @format
  * @flow strict-local
  */
-
-import React, {useEffect} from 'react';
+import 'react-native-get-random-values';
+import '@ethersproject/shims';
+import React, {useEffect, useState} from 'react';
 
 import {LogBox, StyleSheet} from 'react-native';
 
@@ -14,9 +15,16 @@ import {getDatabase, ref, onValue} from 'firebase/database';
 import {initializeApp} from 'firebase/app';
 import Routes from './navigation/Routes';
 import {AuthProvider} from './navigation/AuthProvider';
+import {NetWorkProvider} from './navigation/NetworkProvider';
+import {Client} from 'xrpl';
 
 const App = () => {
   LogBox.ignoreAllLogs();
+  LogBox.ignoreLogs([
+    "Warning: The provided value 'moz",
+    "Warning: The provided value 'ms-stream",
+  ]);
+
   useEffect(() => {
     const appUrl = initializeApp({
       databaseURL: 'https://exzingdb-default-rtdb.firebaseio.com',
@@ -29,9 +37,11 @@ const App = () => {
   }, []);
 
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <NetWorkProvider>
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
+    </NetWorkProvider>
   );
 };
 

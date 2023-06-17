@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
@@ -66,7 +67,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
           ? initialCOe.Petrol1L + initialCOe.LargeLPGCar1Km
           : 0;
 
-      setCarbonFP(value);
+      setCarbonFP(value.toFixed(2));
       console.log({value: value});
       return value;
     };
@@ -74,7 +75,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     estimatedCarbonFP();
   }, [carbonFP, selectedFuel, selectedType]);
 
-  const {register, error, isLoading, user} = useContext(AuthContext);
+  const {register, error, isLoading} = useContext(AuthContext);
   const [data, setData] = React.useState({
     check_textInputChange: false,
     secureTextEntry: true,
@@ -93,20 +94,6 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     } else {
       setCarFuelValidError('');
     }
-
-    // if (carFuelValidError === '') {
-    //   // setData({
-    //   //   ...data,
-    //   //   isValidCarFuel: true,
-    //   // });
-    //   setSelectedFuel(val);
-    // } else {
-    //   // setData({
-    //   //   ...data,
-    //   //   isValidCarFuel: false,
-    //   // });
-    //   setSelectedFuel('');
-    // }
   };
   const carMMYInputChange = val => {
     console.log({selectedMMY: val});
@@ -115,20 +102,6 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     } else {
       setMMYValidError('');
     }
-
-    // if (carMMYValidError === '') {
-    //   // setData({
-    //   //   ...data,
-    //   //   isValidCarMMY: true,
-    //   // });
-    //   // setSelected(val);
-    // } else {
-    //   // setData({
-    //   //   ...data,
-    //   //   isValidCarMMY: false,
-    //   // });
-    //   // setSelected('');
-    // }
   };
   const carTypeInputChange = val => {
     console.log({typeVal: val});
@@ -137,20 +110,6 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     } else {
       setTypeValidError('');
     }
-
-    // if (carTypeValidError === '') {
-    //   setData({
-    //     ...data,
-    //     isValidCarType: false,
-    //   });
-    //   setSelectedType(val);
-    // } else {
-    //   setData({
-    //     ...data,
-    //     isValidCarType: true,
-    //   });
-    //   setSelectedType('');
-    // }
   };
   const carColourInputChange = val => {
     if (val === '') {
@@ -158,19 +117,6 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     } else {
       setCarColourValidError('');
     }
-    // if (carColourValidError === '') {
-    //   setData({
-    //     ...data,
-    //     isValidCarColour: true,
-    //   });
-    //   setSelectedColor(val);
-    // } else {
-    //   setData({
-    //     ...data,
-    //     isValidCarColour: false,
-    //   });
-    //   setSelectedColor('');
-    // }
   };
   const carRegInputChange = val => {
     if (val === '') {
@@ -203,6 +149,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
     _carType,
     _carMMY,
     _carReg,
+    _carbonFP,
   ) => {
     carFuelInputChange(_carFuel) ||
       carColourInputChange(_carColour) ||
@@ -219,7 +166,8 @@ const VehicleDetailsScreen = ({navigation, route}) => {
       _carColour &&
       _carType &&
       _carMMY &&
-      _carReg
+      _carReg &&
+      _carbonFP
     ) {
       register(
         _email,
@@ -231,6 +179,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
         _carReg,
         _carFuel,
         _carMMY,
+        _carbonFP,
       );
     }
   };
@@ -277,22 +226,36 @@ const VehicleDetailsScreen = ({navigation, route}) => {
             save="value"
             label="Categories"
             inputStyles={{
-              color: 'grey',
+              color: 'white',
             }}
             boxStyles={{
               borderRadius: 18,
             }}
-            dropdownStyles={{
-              backgroundColor: '#f9d29d',
-            }}
+            // dropdownStyles={{
+            //   backgroundColor: 'white',
+            // }}
             arrowicon={
-              <FontAwesome name="chevron-down" size={12} color={'grey'} />
+              <FontAwesome name="chevron-down" size={12} color={'white'} />
             }
             closeicon={
-              <FontAwesome name="chevron-up" size={12} color={'grey'} />
+              <FontAwesome name="chevron-up" size={12} color={'white'} />
             }
-            searchicon={<FontAwesome name="search" size={12} color={'grey'} />}
+            searchicon={<FontAwesome name="search" size={12} color={'white'} />}
             search={true}
+            checkBoxStyles={{
+              borderColor: '#f9d29d',
+            }}
+            dropdownItemStyles={{
+              color: '#f9d29d',
+            }}
+            dropdownTextStyles={{
+              color: 'white',
+            }}
+            disabledItemStyles={{backgroundColor: '#000000'}}
+            disabledTextStyles={{color: 'white'}}
+            // badgeTextStyles={{
+            //   color: 'white',
+            // }}
           />
           {!selected && (
             <Animatable.View animation="fadeInLeft" duration={500}>
@@ -309,12 +272,15 @@ const VehicleDetailsScreen = ({navigation, route}) => {
             data={vehicleType}
             save="value"
             inputStyles={{
-              color: 'grey',
+              color: 'white',
+            }}
+            dropdownTextStyles={{
+              color: 'white',
             }}
             arrowicon={
-              <FontAwesome name="chevron-down" size={12} color={'grey'} />
+              <FontAwesome name="chevron-down" size={12} color={'white'} />
             }
-            searchicon={<FontAwesome name="search" size={12} color={'grey'} />}
+            searchicon={<FontAwesome name="search" size={12} color={'white'} />}
             search={true}
             // boxStyles={{borderRadius: 12}} //override default styles
             // defaultOption={{key: 15631, value: 'SmallPetrolCar'}}
@@ -324,10 +290,12 @@ const VehicleDetailsScreen = ({navigation, route}) => {
               // backgroundColor: '#f9d29d',
               // backgroundColor: '#171717',
             }}
-            dropdownStyles={{
-              // borderRadius: 12,
-              backgroundColor: '#f9d29d',
-            }}
+            dropdownStyles={
+              {
+                // borderRadius: 12,
+                // backgroundColor: '#f9d29d',
+              }
+            }
           />
           {!selectedType && (
             <Animatable.View animation="fadeInLeft" duration={500}>
@@ -349,18 +317,18 @@ const VehicleDetailsScreen = ({navigation, route}) => {
             data={fuelType}
             save="value"
             inputStyles={{
-              color: 'grey',
+              color: 'white',
             }}
             arrowicon={
-              <FontAwesome name="chevron-down" size={12} color={'grey'} />
+              <FontAwesome name="chevron-down" size={12} color={'white'} />
             }
-            searchicon={<FontAwesome name="search" size={12} color={'grey'} />}
+            searchicon={<FontAwesome name="search" size={12} color={'white'} />}
             search={true}
             boxStyles={{
               borderRadius: 12,
             }}
-            dropdownStyles={{
-              backgroundColor: '#f9d29d',
+            dropdownTextStyles={{
+              color: 'white',
             }}
           />
           {!selectedFuel && (
@@ -378,18 +346,18 @@ const VehicleDetailsScreen = ({navigation, route}) => {
             data={colorType}
             save="value"
             inputStyles={{
-              color: 'grey',
+              color: 'white',
             }}
             arrowicon={
-              <FontAwesome name="chevron-down" size={12} color={'grey'} />
+              <FontAwesome name="chevron-down" size={12} color={'white'} />
             }
-            searchicon={<FontAwesome name="search" size={12} color={'grey'} />}
+            searchicon={<FontAwesome name="search" size={12} color={'white'} />}
             search={true}
             boxStyles={{
               borderRadius: 12,
             }}
-            dropdownStyles={{
-              backgroundColor: '#f9d29d',
+            dropdownTextStyles={{
+              color: 'white',
             }}
           />
           {!selectedColor && (
@@ -406,7 +374,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
           <View style={styles.action}>
             <TextInput
               placeholder="Enter valid registration number"
-              placeholderTextColor="grey"
+              placeholderTextColor="white"
               style={styles.textInput}
               autoCapitalize="none"
               onChangeText={val => {
@@ -451,6 +419,7 @@ const VehicleDetailsScreen = ({navigation, route}) => {
                   selectedType,
                   selected,
                   carReg,
+                  carbonFP,
                 );
               }}>
               <LinearGradient
