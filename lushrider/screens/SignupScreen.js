@@ -353,12 +353,7 @@ const SignupScreen = ({navigation}) => {
           {isLoading && (
             <View style={styles.preloader}>
               <ActivityIndicator size="large" color="gold" />
-              {Toast.showWithGravity(
-                `Welcome
-              ${user ? user.displayName : user?.email}!`,
-                Toast.LONG,
-                Toast.TOP,
-              )}
+              {Toast.showWithGravity(`Welcome!`, Toast.LONG, Toast.TOP)}
             </View>
           )}
 

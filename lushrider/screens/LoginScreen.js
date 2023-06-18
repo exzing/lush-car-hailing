@@ -23,7 +23,6 @@ import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
 import {AuthContext} from '../navigation/AuthProvider';
 import Toast from 'react-native-simple-toast';
-// import SimpleLottie from '../components/SimpleLottie';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState();
@@ -42,19 +41,6 @@ const LoginScreen = ({navigation}) => {
     isValidUser: true,
     isValidPassword: true,
   });
-
-  //   createUserWithEmailAndPassword(auth, email, password)
-  //   .then((userCredential) => {
-  //     // Signed in
-  //     const user = userCredential.user;
-  //     // ...
-  //   })
-  //   .catch((error) => {
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // ..
-  //   });
-  // auth_signup_password.js
 
   const {login, googleLogin, fbLogin, user, error, isLoading} =
     useContext(AuthContext);
@@ -358,7 +344,7 @@ const LoginScreen = ({navigation}) => {
             <ActivityIndicator size="large" color="gold" />
             {Toast.showWithGravity(
               `Welcome Back
-              ${user ? user.displayName : user?.email}!`,
+              `,
               Toast.LONG,
               Toast.TOP,
             )}

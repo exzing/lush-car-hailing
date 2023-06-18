@@ -10,16 +10,7 @@ import {firebase} from '@react-native-firebase/database';
 import {initializeApp} from 'firebase/app';
 import {getDatabase, onValue, ref} from 'firebase/database';
 import React, {useEffect} from 'react';
-import {
-  LogBox,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {LogBox, StyleSheet} from 'react-native';
 // import {FirebaseOptions_android, FirebaseOptions_ios} from './firebase_config';
 
 import {AuthProvider} from './navigation/AuthProvider';
@@ -27,7 +18,6 @@ import Routes from './navigation/Routes';
 import LoginScreen from './screens/LoginScreen';
 
 const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
   // Ignore log notification by message:
   LogBox.ignoreLogs(['Error on GMAPS route request: ZERO_RESULTS']);
   LogBox.ignoreLogs(['Error on GMAPS route request: NOT_FOUND']);

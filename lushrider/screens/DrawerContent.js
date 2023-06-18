@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
 import {
   useTheme,
@@ -20,8 +20,11 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 export function DrawerContent(props) {
   const paperTheme = useTheme();
-  const {user, logout} = useContext(AuthContext);
+  const {signedInRider, logout, authRiderRef} = useContext(AuthContext);
   const userPhoto = require('../assets/users/user_icon.png');
+  const [profileName, setProfileName] = useState(null);
+  const [profilePhone, setProfilePhone] = useState(null);
+  const [profileEmail, setProfileEmail] = useState(null);
   // const {signOut, toggleTheme} = React.useContext(AuthContext);
 
   //   <Image
@@ -30,6 +33,28 @@ export function DrawerContent(props) {
   //   style={styles.infoImage}
   // />
 
+  useEffect(() => {
+    const checkSignIn = async () => {
+      if (authRiderRef) {
+        authRiderRef.on('value', snap => {
+          // console.log({profileSnap: snap});
+
+          if (snap.exists()) {
+            const email = snap.val()?.email;
+            const username = snap.val()?.userName;
+            const phonenum = snap.val()?.phone;
+            console.log({email, username, phonenum});
+            setProfileEmail(email);
+            setProfileName(username);
+            setProfilePhone(phonenum);
+          }
+        });
+      }
+    };
+    checkSignIn();
+  }, [authRiderRef]);
+
+  console.log({profileEmail, profileName, profilePhone});
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props}>
@@ -50,9 +75,16 @@ export function DrawerContent(props) {
               />
 
               <View style={{marginLeft: 15, flexDirection: 'column'}}>
-                <Title style={styles.title}> {user && user.displayName}</Title>
+                <Title style={styles.title}>
+                  {' '}
+                  {(signedInRider && signedInRider?.displayName) ?? profileName}
+                </Title>
                 <Caption style={styles.caption}>
-                  {user ? user?.email : ''}
+                  {(signedInRider && signedInRider?.email) ?? profileEmail}
+                </Caption>
+                <Caption style={styles.caption}>
+                  {(signedInRider && signedInRider?.phoneNumber) ??
+                    profilePhone}
                 </Caption>
               </View>
             </View>

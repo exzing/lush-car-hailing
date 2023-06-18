@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
@@ -7,24 +8,16 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import HomeScreen from './HomeScreen';
-// import NotificationScreen from '../screens_/NotificationScreen';
-// import ExploreScreen from '../screens_/ExploreScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-// import MapTestScreen from '../screens_/MapTestScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 
 import {useTheme, Avatar} from 'react-native-paper';
 import {View} from 'react-native-animatable';
-// import {TouchableOpacity} from 'react-native-gesture-handler';
 import CardListScreen from '../screens/CardListScreen';
 import CardItemDetails from '../screens/CardItemDetails';
 import HomelyScreen from './HomelyScreen';
-// import {_Example} from '../screens_/Example';
-// import Example from '../screens_/Example';
 import ImageUploadMission from '../components/ImageUploadMission';
-// import MapModal from '../components/MapModal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import MapExample from './MapExample';
 import {Journey} from './Journey';
 
 const HomeStack = createStackNavigator();
@@ -211,7 +204,7 @@ const ProfileStackScreen = ({navigation}) => {
         name="Profiley"
         component={ProfileScreen}
         options={{
-          title: `MY PROFILE`,
+          title: 'MY PROFILE',
           headerTitleAlign: 'center',
           headerTintColor: '#fff',
           headerStyle: {
@@ -237,7 +230,7 @@ const ProfileStackScreen = ({navigation}) => {
                 size={25}
                 backgroundColor="beige"
                 color={colors.text}
-                onPress={() => navigation.navigate('EditProfile')}
+                onPress={() => {}}
               />
             </View>
           ),

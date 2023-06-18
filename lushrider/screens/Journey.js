@@ -27,9 +27,10 @@ import {theme} from '../styles/theme';
 import ModalActivityIndicator from '../components/ModalActivityIndicator';
 import ImageUploadMission from '../components/ImageUploadMission';
 import RotateAnimation from '../components/RotateAnimation';
-import {modalstyles} from '../styles/imageuploadmission';
+import {journeystyles, modalstyles} from '../styles/modalStyles';
 import NotificationService from './NotificationService';
 import Toast from 'react-native-simple-toast';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const CompanyIcon = require('../assets/ic_launcher_round.png');
 
@@ -41,7 +42,8 @@ const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 export const Journey = ({route, navigation}) => {
-  const {user, authRiderRef} = useContext(AuthContext);
+  const {signedInRider, authRiderRef, dvehicleDetails} =
+    useContext(AuthContext);
   const [coordinates, setCoordinates] = useState([
     {
       latitude: 4.3317876,
@@ -60,30 +62,39 @@ export const Journey = ({route, navigation}) => {
   const [isCancel, setIsCancel] = useState(false);
   const [region, setRegion] = useState(0);
   const [position, setPosition] = useState(0);
-  const [isSetSuccess, setIsSetSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessModalVisible, setSuccessModalVisible] = useState(false);
   const [rideInfo, setRideInfo] = useState(null);
-  const [deviceToken, setDeviceToken] = useState(null);
+  const [driversToken, setDriversToken] = useState(null);
   const [driverStatus, setDriverStatus] = useState(null);
   const [driverLocation, setDriverLocation] = useState(null);
   const [driverUID, setDriverUID] = useState(null);
   const [driverTokenID, setDriverTokenID] = useState(null);
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [userName, setUserName] = useState(null);
+  const [driverRequest, setDriverRequest] = useState(null);
+  const [driverPhone, setDriverPhone] = useState(null);
+  const [driverName, setDriverName] = useState(null);
+  const [isDriverFound, setIsDriverFound] = useState(false);
+  const [orderedRide, setOrderedRide] = useState(null);
 
   const mapRef = useRef();
+  const dummyPhoto = require('../assets/users/user_icon.png');
 
+  // console.log({orderedRide});
   // get params
   useEffect(() => {
-    if (!route.params) return;
+    if (!route.params) {
+      return;
+    }
     const getParams = () => {
-      console.log({route_params: route.params});
-      console.log({origin_desc: route?.params?.origin?.description});
-      console.log({origin_lat: route?.params?.origin?.location?.latitude});
-      console.log({origin_lng: route?.params?.origin?.location?.longitude});
-      console.log({dest_desc: route?.params?.destination?.description});
-      console.log({dest_lat: route?.params?.destination?.destination?.lat});
-      console.log({dest_lng: route?.params?.destination?.destination?.lng});
+      // console.log({route_params: route.params});
+      // console.log({origin_desc: route?.params?.origin?.description});
+      // console.log({origin_lat: route?.params?.origin?.location?.latitude});
+      // console.log({origin_lng: route?.params?.origin?.location?.longitude});
+      // console.log({dest_desc: route?.params?.destination?.description});
+      // console.log({dest_lat: route?.params?.destination?.destination?.lat});
+      // console.log({dest_lng: route?.params?.destination?.destination?.lng});
       setCoordinates([
         {
           latitude: route?.params?.origin?.location?.latitude ?? 0,
@@ -111,10 +122,12 @@ export const Journey = ({route, navigation}) => {
 
   //modal timeout
   useEffect(() => {
-    if (!isSetSuccess) return;
+    if (!isSuccess) {
+      return;
+    }
 
     const timeout = setTimeout(() => {
-      setIsSetSuccess(false);
+      setIsSuccess(false);
       if (isCancel === false) {
         setIsCancel(true);
       } else {
@@ -125,33 +138,145 @@ export const Journey = ({route, navigation}) => {
     return () => clearTimeout(timeout);
   });
 
-  // console.log({distance: distance});
-  // console.log({fdb_deviceToken: deviceToken});
-  // console.log({rideInfo: rideInfo});
+  useEffect(() => {
+    const driverFound = async () => {
+      if (driverRequest === 'accepted!') {
+        setIsDriverFound(true);
+        Toast.showWithGravity('Found a Driver', Toast.LONG, Toast.CENTER);
+        setIsLoading(false);
+      } else {
+        setIsDriverFound(false);
+      }
+      // driverRequest === 'accepted!'f
+      // ? Toast.showWithGravity(
+      //     'Found a Driver!!!',
+      //     Toast.LONG,
+      //     Toast.TOP,
+      //   ) && setIsLoading(false)
+      // : null
+    };
+    driverFound();
+  }, [driverRequest]);
+
+  console.log({isDriverFound, driverRequest});
+
+  useEffect(() => {
+    const checkDriversOnline = async () => {
+      const driversOnlineRef = firebase
+        .database()
+        .ref('drivers/drivers_online');
+
+      driversOnlineRef.on('value', onlineDriversSnap => {
+        // console.log({snapshot: onlineDriversSnap});
+        if (onlineDriversSnap.exists()) {
+          onlineDriversSnap.forEach(childSnap => {
+            const childData = childSnap.val();
+            // console.log({onlineDrivers: childData});
+            setDriverLocation(childData?.l);
+          });
+        }
+      });
+    };
+
+    checkDriversOnline();
+  }, []);
+
+  useEffect(() => {
+    const checkRiders = async () => {
+      const authRidersRef = firebase
+        .database()
+        .ref(`riders/${signedInRider?.uid}`); // drivers + riderId not correct
+      authRidersRef.on('value', snap => {
+        const data = snap.val();
+        console.log({
+          // Tdata: data,
+        });
+        setOrderedRide(data?.orderedRide);
+        setPhoneNumber(data?.phone);
+        setUserName(data?.userName);
+      });
+    };
+
+    checkRiders();
+  }, [signedInRider?.uid]);
+
+  useEffect(() => {
+    const checkAllDriversId = async () => {
+      const allDriverRef = firebase.database().ref('drivers/drivers_Id');
+      // .limitToFirst(1);
+      // .orderByChild('online');
+      // .equalTo('true');
+
+      allDriverRef.on('value', allDriversSnap => {
+        // console.log({snapshot: allDriversSnap});
+        allDriversSnap.forEach(childSnap => {
+          // childData?.online === 'true'
+          //   ? console.log('YEA')
+          //   : console.log('NOPE');
+          const childData = childSnap.val();
+          // [childData].map((value, index) => {
+          //   let val = value;
+          //   let email = val?.email;
+          //   console.log({email});
+          // });
+          // let values = childData?.online === true;
+          // data.filter
+          const online = childData?.online;
+          const uid = childData?.uid;
+          const username = childData?.userName;
+          const token = childData?.fcmDeviceTokens;
+          const requestStatus = childData?.requestStatus;
+
+          console.log({online, uid, username, token, requestStatus});
+          if (online === true) {
+            console.log('A driver is online...');
+            setDriversToken(token);
+            setDriverStatus(online);
+            setDriverUID(childData?.uid);
+            setDriverTokenID(childData?.userIdToken);
+            setDriverRequest(childData?.requestStatus);
+            setDriverPhone(childData?.phoneNumber);
+            setDriverName(childData?.userName);
+            // console.log({token});
+          }
+        });
+      });
+    };
+
+    checkAllDriversId();
+  }, []);
 
   const cancelRideOrder = async () => {
-    const canceOrderRef = firebase
+    const cancelOrderRef = firebase
       .database()
       .ref()
-      .child(`riders/rideRequest/${user?.uid}`);
+      .child(`riders/rideRequest/${signedInRider?.uid}`);
+    const ridersRef = firebase
+      .database()
+      .ref()
+      .child(`riders/${signedInRider?.uid}`);
 
-    canceOrderRef.remove(res => {
-      if (res === null) {
-        console.log({res: res});
-        console.log('Operation Completed!');
-        setIsLoading(false);
-        setIsSetSuccess(true);
-        // setDistance(0)
-        setCoordinates([
-          {latitude: 0.0, longitude: 0.0},
-          {latitude: 0.0, longitude: 0.0},
-        ]);
-        // initializedMap();
+    //remover ride request
+    cancelOrderRef
+      .remove(res => {
+        if (res === null) {
+          console.log({res: res});
+          console.log('Operation Completed!');
+          setIsLoading(false);
+          setIsSuccess(true);
+          // setDistance(0)
+          setCoordinates([
+            {latitude: 0.0, longitude: 0.0},
+            {latitude: 0.0, longitude: 0.0},
+          ]);
+          setIsDriverFound(false);
+        }
+      })
+      .catch(err => err);
 
-        // navigation.goBack();
-        // setIsCancel(false);
-      }
-      // res === null && setIsLoading(false) && setIsCancel(false);
+    //update rider db
+    ridersRef.update({
+      orderedRide: 'cancelled',
     });
 
     // resetCoord();
@@ -163,25 +288,10 @@ export const Journey = ({route, navigation}) => {
   };
 
   const createRideOrder = async () => {
-    // setDialogueOpen(true);
-    // console.log({isLoading: isLoading});
-
     const riderRequestRef = firebase
       .database()
       .ref()
-      .child(`riders/rideRequest/${user?.uid}`);
-
-    const driversOnlineRef = firebase
-      .database()
-      .ref()
-      .child('drivers/drivers_online')
-      .once('value');
-
-    const driversIdRef = firebase
-      .database()
-      .ref()
-      .child('drivers/drivers_Id')
-      .once('value');
+      .child(`riders/rideRequest/${signedInRider?.uid}`);
 
     const pickupMap = {
       latitude: coordinates[0]?.latitude.toString(),
@@ -193,51 +303,12 @@ export const Journey = ({route, navigation}) => {
       longitude: coordinates[1]?.longitude.toString(),
     };
 
-    if ((await driversOnlineRef).exists()) {
-      // const data = [snapshot.val()];
-      (await driversOnlineRef).forEach(childSnap => {
-        if (childSnap.exists()) {
-          const childData = childSnap.val();
-          console.log({_childData: childData});
-          setDriverLocation(childData?.l);
-          // location.push(childData?.l);
-        }
-      });
-    }
-
-    if ((await driversIdRef).exists()) {
-      // const data = [snapshot.val()];
-      (await driversIdRef).forEach(childSnap => {
-        const childData = childSnap.val();
-
-        setDeviceToken(childData?.fcmDeviceTokens);
-        setDriverStatus(childData?.online);
-        setDriverUID(childData?.uid);
-        setDriverTokenID(childData?.userIdToken);
-        setPhoneNumber(childData?.phoneNumber);
-        setUserName(childData?.userName);
-      });
-    }
-    // console.log({
-    //   location: {
-    //     latitude: location[0][0],
-    //     longitude: location[0][1],
-    //   },
-    // });
-    // console.log({driverTokenID: driverTokenID});
-    // console.log({driverUID: driverUID});
-    // console.log({driverStatus: driverStatus});
-    // console.log({deviceToken: deviceToken});
-    // console.log({phoneNumber: phoneNumber});
-    // console.log({userName: userName});
-    // console.log({driverLocation: driverLocation});
-
     const rideMap = {
       createdAt: firebase.database().getServerTime(),
-      // 'rider_name': currentUserInfo!.displayName,
-      // 'rider_phone': currentUserInfo.phoneNumber,
-      riderId: user?.uid,
-      rider_email_address: user?.email,
+      rider_name: userName,
+      rider_phone: phoneNumber,
+      riderId: signedInRider?.uid,
+      rider_email_address: signedInRider?.email,
       destination_address: route.params?.destination?.description,
       pickup_address: route.params?.origin?.description,
       location: pickupMap,
@@ -250,67 +321,53 @@ export const Journey = ({route, navigation}) => {
       driver_location: driverLocation,
       driver_uid: driverUID,
       drivertokenID: driverTokenID,
-      driver_username: userName,
-      driver_phone: phoneNumber,
+      // driver_username: userName,
+      // driver_phone: phoneNumber,
     };
 
     // console.log({rideMap: rideMap});
 
     if (driverStatus === 'none' || driverStatus === false) {
+      // setIsLoading(true);
       Toast.showWithGravity('Driver is offline!', Toast.LONG, Toast.TOP);
       setIsLoading(false);
-      return;
     } else {
       await riderRequestRef.set(rideMap, async error => {
         // if (error) console.error(error);
         console.log({complete: error});
         if (error === null) {
-          // await authRiderRef.update({
-          //   newJourneyDID: 'waiting...',
-          //   requestStatus: 'waiting...',
-          // });
-          setIsLoading(false);
-          setIsSetSuccess(true);
-          // alert('Successfull!');
+          setIsLoading(true);
+          setIsSuccess(true);
+          const ridersRef = firebase
+            .database()
+            .ref()
+            .child(`riders/${signedInRider?.uid}`);
+
+          ridersRef.update({
+            orderedRide: 'initiated',
+          });
         }
       });
     }
   };
 
   useEffect(() => {
-    // if (!route.params) return;
-    const fetchDriverInfo = async () => {
-      await firebase
-        .database()
-        .ref('drivers')
-        .child('drivers_Id')
-        .on('value', snapshot => {
-          if (snapshot.exists()) {
-            snapshot.forEach(childSnapshot => {
-              var childKey = childSnapshot.key;
-              var childData = childSnapshot.val();
-              // console.log({_fcmDeviceTokens: childData?.fcmDeviceTokens});
-              console.log({driverID: childData?.userIdToken});
-              console.log({driverUID: childData?.uid});
-              console.log({online: childData?.online});
-              console.log({phoneNumber: childData?.phoneNumber});
-              console.log({userName: childData?.userName});
-              setDeviceToken(childData?.fcmDeviceTokens);
-              setDriverStatus(childData?.online);
-              setDriverUID(childData?.uid);
-              setDriverTokenID(childData?.userIdToken);
-              setPhoneNumber(childData?.phoneNumber);
-              setUserName(childData?.userName);
-
-              // _deviceToken.push(childData?.userIdToken);
-              // driversDetails.push(childData);
-            });
-          }
-        });
-    };
-
-    // fetchDriverInfo();
-  });
+    console.log({
+      driverStatus,
+      driversToken,
+      driverPhone,
+      driverName,
+      driverRequest,
+    });
+  }, [
+    driversToken,
+    driverStatus,
+    driverTokenID,
+    driverUID,
+    driverPhone,
+    driverName,
+    driverRequest,
+  ]);
 
   // useEffect(() => {
   //   firebase
@@ -345,51 +402,34 @@ export const Journey = ({route, navigation}) => {
   // console.log({driverStatus: driverStatus});
   // console.log({deviceToken: deviceToken});
 
-  const sendNotification = async () => {
-    // var wantedOrder = firebase
-    //   .database()
-    //   .ref('orders')
-    //   .orderByChild('name')
-    //    .limitToLast(2)
-    //   .equalTo('yourText')
-    //   .on('value');
-    // setIsLoading(true);
-    console.log({_deviceToks: deviceToken});
-    console.log({_driverStatus: driverStatus});
+  const notifyCancelRequest = async () => {
+    console.log({driversToken});
+    console.log({driverStatus});
 
-    if (deviceToken !== 'none' && driverStatus === true) {
-      console.log({_TdeviceToks: deviceToken});
-      console.log({_TdriverStatus: driverStatus});
+    if (driversToken !== 'none' && driverStatus === true) {
       let notificationData = {
-        pickup: route.params?.origin?.description,
-        destination: route.params?.destination?.description,
-        fare: `₦ ${charge && charge.toFixed(0)}`,
-        distance: `${distance.toFixed(0)} Km`,
-        duration: `${duration.toFixed(0)} min`,
-        pickupGeo: {
-          latitude: route?.params?.origin?.location?.latitude,
-          longitude: route?.params?.origin?.location?.longitude,
-        },
-        destinationGeo: {
-          latitude: route?.params?.destination?.destination?.lat,
-          longitude: route?.params?.destination?.destination?.lng,
-        },
-        body: 'data.body',
-        title: 'Ride With Us!',
+        abortMessage: '😢 Driver Cancelled!',
+        body: 'Ride with us lushly',
+        title: 'Ride Cancellation Notification!',
         token:
           //retrieve from firebase (recipient)
-          deviceToken, // recipient deviceToken (retrieve for fdb)
+          driversToken, // recipient deviceToken (retrieve for fdb)
       };
-      console.log({_notificationData: notificationData});
+      console.log({notificationData});
       // setIsLoading(true);
       await NotificationService.sendSingleDeviceNotification(notificationData)
         .then(res => {
           if (res && res.status === 200) {
             console.log({res: res, status: res.status});
-            // alert('Yep');
-            setIsLoading(false);
-            Toast.showWithGravity('Successful!', Toast.SHORT, Toast.TOP);
-            setIsSetSuccess(true);
+
+            // setIsLoading(true);
+
+            Toast.showWithGravity(
+              'Cancel Notification Successfully Sent!',
+              Toast.SHORT,
+              Toast.TOP,
+            );
+            setIsSuccess(true);
           } else {
             console.log('Error!');
             setIsLoading(false);
@@ -410,187 +450,78 @@ export const Journey = ({route, navigation}) => {
           );
         });
     }
-
-    // if (driverStatus === 'none' || driverStatus === 'false') {
-    //   Toast.showWithGravity('Driver is offline!', Toast.LONG, Toast.TOP);
-    //   setIsLoading(false);
-    // }
-
-    setIsLoading(false);
   };
+  const notifyRideRequest = async () => {
+    // var wantedOrder = firebase
+    //   .database()
+    //   .ref('orders')
+    //   .orderByChild('name')
+    //    .limitToLast(2)
+    //   .equalTo('yourText')
+    //   .on('value');
+    // setIsLoading(true);
+    console.log({driversToken});
+    console.log({driverStatus});
 
-  //   return (
-  //     <View style={modalstyles.container}>
-  //       <View style={modalstyles.container}>
-  //         <MapView
-  //           initialRegion={{
-  //             // latitude: LATITUDE,
-  //             // longitude: LONGITUDE,
-  //             latitude: coordinates[0].latitude,
-  //             longitude: coordinates[0].longitude,
-  //             latitudeDelta: LATITUDE_DELTA + 0.15,
-  //             longitudeDelta: LONGITUDE_DELTA + 0.15,
-  //             // latitudeDelta: LATITUDE_DELTA,
-  //             // longitudeDelta: LONGITUDE_DELTA,
-  //           }}
-  //           style={StyleSheet.absoluteFill}
-  //           // zoomControlEnabled={true}
-  //           // zoomEnabled={true}
-  //           showsUserLocation={true}
-  //           ref={mapRef}
-  //           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-  //         >
-  //           {coordinates.map(
-  //             (coordinate, index) => (
-  //               console.log({
-  //                 coordinate_: coordinate,
-  //                 index: index,
-  //                 coordinates_: coordinates,
-  //               }),
-  //               (<Marker key={`coordinate_${index}`} coordinate={coordinate} />)
-  //             ),
-  //           )}
+    if (driversToken !== 'none' && driverStatus === true) {
+      let notificationData = {
+        riderPhone: phoneNumber,
+        riderName: userName,
+        pickup: route.params?.origin?.description,
+        destination: route.params?.destination?.description,
+        fare: `₦ ${charge && charge.toFixed(0)}`,
+        distance: `${distance.toFixed(0)} Km`,
+        duration: `${duration.toFixed(0)} min`,
+        pickupGeo: {
+          latitude: route?.params?.origin?.location?.latitude,
+          longitude: route?.params?.origin?.location?.longitude,
+        },
+        destinationGeo: {
+          latitude: route?.params?.destination?.destination?.lat,
+          longitude: route?.params?.destination?.destination?.lng,
+        },
+        body: 'Ride with us lushly',
+        title: 'Ride Request Notification!',
+        token:
+          //retrieve from firebase (recipient)
+          driversToken, // recipient deviceToken (retrieve for fdb)
+      };
+      console.log({notificationData});
+      // setIsLoading(true);
+      await NotificationService.sendSingleDeviceNotification(notificationData)
+        .then(res => {
+          if (res && res.status === 200) {
+            console.log({res: res, status: res.status});
 
-  //           {coordinates.length > 0 && (
-  //             <MapViewDirections
-  //               origin={coordinates[0]}
-  //               destination={coordinates[1]}
-  //               apikey={keys.GOOGLE_MAP_APIKEY}
-  //               strokeWidth={6}
-  //               strokeColor="hotpink"
-  //               // resetOnChange={true}
-  //               // optimizeWaypoints={true}
-  //               onStart={params => {
-  //                 console.log(
-  //                   `Started routing between "${params.origin}" and "${params.destination}"`,
-  //                 );
-  //               }}
-  //               onReady={result => {
-  //                 setDistance(result.distance);
-  //                 setDuration(result.duration);
-  //                 // console.log({result_coord: result.coordinates});
-  //                 console.log(`Distance: ${result.distance} km`);
-  //                 console.log(`Duration: ${result.duration} min.`);
+            setIsLoading(true);
 
-  //                 mapRef.current.fitToCoordinates(result.coordinates, {
-  //                   edgePadding: {
-  //                     right: width / 5,
-  //                     bottom: height / 5,
-  //                     left: width / 5,
-  //                     top: height / 5,
-  //                   },
-  //                 });
-  //               }}
-  //               onError={errorMessage => {
-  //                 console.log('GOT AN ERROR', errorMessage);
-  //               }}
-  //             />
-  //           )}
-  //         </MapView>
-  //         {distance > 0 && (
-  //           <>
-  //             <View style={modalstyles.info}>
-  //               <View>
-  //                 <Text style={modalstyles.companyTitle}>Ride Summary</Text>
-  //                 <View style={modalstyles.tags}>
-  //                   <View style={modalstyles.tag}>
-  //                     <Text style={modalstyles.tagText}>
-  //                       {duration.toFixed(0)} min
-  //                     </Text>
-  //                   </View>
-  //                   <View style={modalstyles.tag}>
-  //                     <Text style={modalstyles.tagText}>
-  //                       {distance.toFixed(0)} km
-  //                     </Text>
-  //                   </View>
-  //                   <View style={modalstyles.tag}>
-  //                     <Text style={modalstyles.tagText}>
-  //                       ₦{charge && charge.toFixed(0)}
-  //                     </Text>
-  //                   </View>
-  //                 </View>
-  //               </View>
-  //             </View>
-  //             <View style={modalstyles.mainDivider} />
-
-  //             {/* <View style={modalstyles.mainDivider} /> */}
-  //             <View style={modalstyles.stakeUnstakeButtons}>
-  //               {isCancel === false && (
-  //                 <TouchableOpacity
-  //                   onPress={() => {
-  //                     setIsLoading(true);
-  //                     // setIsSetSuccess(true);
-  //                     createRideOrder();
-  //                     // setIsLoading(false);
-  //                     // console.log({distance: distance});
-  //                   }}
-  //                   // disabled={!isSetSuccess}
-  //                 >
-  //                   <LinearGradient
-  //                     start={{x: 0, y: 0}}
-  //                     end={{x: 1, y: 1}}
-  //                     colors={['green', 'gold', 'green', 'gold', 'green']}
-  //                     style={modalstyles.instagramButton}>
-  //                     <Text style={modalstyles.stakeButtonText}>Order Ride</Text>
-  //                   </LinearGradient>
-  //                 </TouchableOpacity>
-  //               )}
-  //               {isCancel === true && (
-  //                 <TouchableOpacity
-  //                   onPress={() => {
-  //                     setIsLoading(true);
-  //                     // setIsSetSuccess(true);
-  //                     cancelRideOrder();
-  //                   }}>
-  //                   <LinearGradient
-  //                     start={{x: 0, y: 0}}
-  //                     end={{x: 1, y: 1}}
-  //                     colors={[
-  //                       '#5851DB',
-  //                       '#C13584',
-  //                       '#E1306C',
-  //                       '#FD1D1D',
-  //                       '#F77737',
-  //                     ]}
-  //                     style={modalstyles.instagramButton}>
-  //                     <Text style={modalstyles.stakeButtonText}>Cancel Ride</Text>
-  //                   </LinearGradient>
-  //                 </TouchableOpacity>
-  //               )}
-  //             </View>
-  //             {isLoading === true && <RotateAnimation />}
-  //             {isSetSuccess && (
-  //               <View style={{flex: 1}}>
-  //                 <Modal
-  //                   animationType="slide"
-  //                   transparent={true}
-  //                   visible={true}
-  //                   onRequestClose={() => {
-  //                     // Alert.alert('Modal has been closed.');
-  //                     setSuccessModalVisible(true);
-  //                   }}>
-  //                   <View style={modalstyles.centeredView}>
-  //                     <LinearGradient
-  //                       colors={['beige', 'green', 'beige']}
-  //                       start={{x: 0.7, y: 0}}
-  //                       // colors={['#191919', '#f9d29d', 'red']}
-  //                       style={modalstyles.modal}>
-  //                       <Text style={modalstyles.modalText}>
-  //                         {isCancel === true
-  //                           ? `🗑 Deleted Successfully! ❌`
-  //                           : `🎉  Ride Info Captured Successfully! ✨`}
-  //                         {/* ✨ Successful! ✨ */}
-  //                       </Text>
-  //                     </LinearGradient>
-  //                   </View>
-  //                 </Modal>
-  //               </View>
-  //             )}
-  //           </>
-  //         )}
-  //       </View>
-  //     </View>
-  //   );
+            Toast.showWithGravity(
+              'Ride Notification Successfully Sent!',
+              Toast.LONG,
+              Toast.TOP,
+            );
+            setIsSuccess(true);
+          } else {
+            console.log('Error!');
+            setIsLoading(false);
+            Toast.showWithGravity(
+              'An Error Occur, pls try again!',
+              Toast.LONG,
+              Toast.TOP,
+            );
+          }
+        })
+        .catch(error => {
+          console.log({Error: error});
+          setIsLoading(false);
+          Toast.showWithGravity(
+            'An Error Occur, pls try again!',
+            Toast.LONG,
+            Toast.TOP,
+          );
+        });
+    }
+  };
 
   return (
     <>
@@ -650,9 +581,9 @@ export const Journey = ({route, navigation}) => {
                 onReady={result => {
                   setDistance(result.distance);
                   setDuration(result.duration);
-                  // console.log({result_coord: result.coordinates});
-                  console.log(`Distance: ${result.distance} km`);
-                  console.log(`Duration: ${result.duration} min.`);
+
+                  // console.log(`Distance: ${result.distance} km`);
+                  // console.log(`Duration: ${result.duration} min.`);
 
                   mapRef.current.fitToCoordinates(result.coordinates, {
                     edgePadding: {
@@ -673,14 +604,14 @@ export const Journey = ({route, navigation}) => {
         {distance > 0 && (
           <>
             <View style={modalstyles.info}>
-              {/* <Image
-                resizeMode="stretch"
-                source={CompanyIcon}
-                style={modalstyles.infoImage}
-              /> */}
               <View>
                 <Text style={modalstyles.companyTitle}>Ride Summary</Text>
-
+                <View style={journeystyles.rideTags}>
+                  <Text style={journeystyles.rideTagText}>🚖 To: </Text>
+                  <Text style={journeystyles.rideDestText}>
+                    {route.params?.destination?.description}
+                  </Text>
+                </View>
                 <View style={modalstyles.tags}>
                   <View style={modalstyles.tag}>
                     <Text style={modalstyles.tagText}>
@@ -700,26 +631,31 @@ export const Journey = ({route, navigation}) => {
                 </View>
               </View>
             </View>
-            <View style={modalstyles.mainDivider} />
-
             {/* <View style={modalstyles.mainDivider} /> */}
+
             <View style={modalstyles.stakeUnstakeButtons}>
               {isCancel === false && (
                 <TouchableOpacity
                   onPress={() => {
                     setIsLoading(true);
-                    // setIsSetSuccess(true);
+
                     createRideOrder();
-                    sendNotification();
-                    // setIsLoading(false);
-                    // console.log({distance: distance});
+
+                    notifyRideRequest();
                   }}
                   // disabled={!isSetSuccess}
                 >
                   <LinearGradient
                     start={{x: 0, y: 0}}
                     end={{x: 1, y: 1}}
-                    colors={['green', 'gold', 'green', 'gold', 'green']}
+                    colors={[
+                      'gold',
+                      'green',
+                      'green',
+                      'green',
+                      'green',
+                      'gold',
+                    ]}
                     style={modalstyles.instagramButton}>
                     <Text style={modalstyles.stakeButtonText}>Order Ride</Text>
                   </LinearGradient>
@@ -731,6 +667,7 @@ export const Journey = ({route, navigation}) => {
                     setIsLoading(true);
                     // setIsSetSuccess(true);
                     cancelRideOrder();
+                    notifyCancelRequest();
                   }}>
                   <LinearGradient
                     start={{x: 0, y: 0}}
@@ -748,8 +685,69 @@ export const Journey = ({route, navigation}) => {
                 </TouchableOpacity>
               )}
             </View>
+            {isDriverFound && (
+              <>
+                <View style={{flexDirection: 'row', borderWidth: 2}}>
+                  <View style={{paddingHorizontal: 5}}>
+                    <Text style={{...journeystyles.tagText, color: 'green'}}>
+                      {dvehicleDetails && dvehicleDetails?.model}
+                    </Text>
+                    <Text style={{...journeystyles.tagText, color: 'green'}}>
+                      {dvehicleDetails && dvehicleDetails?.make}
+                    </Text>
+                    <Text style={{...journeystyles.tagText, color: 'green'}}>
+                      {`${dvehicleDetails && dvehicleDetails?.color} colour `}
+                    </Text>
+                    <Text
+                      style={{
+                        ...journeystyles.tagText,
+                        color: 'green',
+                        fontWeight: 'bold',
+                      }}>
+                      {`REG:${dvehicleDetails && dvehicleDetails?.carNumber}  `}
+                    </Text>
+                  </View>
+                  <View>
+                    <Image
+                      resizeMode="stretch"
+                      source={dummyPhoto}
+                      style={modalstyles.driverImage}
+                    />
+                    <Text style={{...journeystyles.tagText, color: 'green'}}>
+                      {driverName ?? ''}
+                    </Text>
+                  </View>
+                  <View style={{marginRight: 10, flexDirection: 'column'}}>
+                    {/* <Text style={journeystyles.riderName}> */}
+
+                    <MaterialCommunityIcons.Button
+                      name="phone-dial"
+                      size={25}
+                      backgroundColor="beige"
+                      color="green"
+                      onPress={() => {}}
+                      style={{
+                        // bottom: 30,
+                        bottom: 5,
+                        // alignItems: 'center',
+                      }}
+                    />
+                  </View>
+                  <View style={{paddingTop: 5}}>
+                    <Text
+                      style={{
+                        ...journeystyles.tagText,
+                        color: 'green',
+                        fontWeight: 'bold',
+                      }}>
+                      {`10mins to Arrive `}
+                    </Text>
+                  </View>
+                </View>
+              </>
+            )}
             {isLoading === true && <RotateAnimation />}
-            {isSetSuccess && (
+            {isSuccess && (
               <View style={{flex: 1}}>
                 <Modal
                   animationType="slide"

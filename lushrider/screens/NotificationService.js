@@ -9,6 +9,9 @@ const sendSingleDeviceNotification = async data => {
 
   var raw = JSON.stringify({
     data: {
+      abortMessage: data.abortMessage,
+      riderPhone: data.riderPhone,
+      riderName: data.riderName,
       pickup: data.pickup,
       destination: data.destination,
       pickupGeo: data.pickupGeo,

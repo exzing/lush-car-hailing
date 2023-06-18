@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {theme} from '../styles/theme';
-import {modalstyles} from '../styles/imageuploadmission';
+import {modalstyles} from '../styles/modalStyles';
 import Ripple from '../components/Ripple';
 import LinearGradient from 'react-native-linear-gradient';
 import AntIcon from 'react-native-vector-icons/AntDesign';

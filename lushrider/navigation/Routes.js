@@ -18,53 +18,15 @@ import SupportScreen from '../screens/SupportScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import BookmarkScreen from '../screens/BookmarkScreen';
 
-import {firebase} from '@react-native-firebase/database';
-
-import {useTheme} from 'react-native-paper';
+import ChatApp from '../firebase_example/ChapApp';
 
 const Routes = ({navigation}) => {
-  const {user, setUser} = useContext(AuthContext);
-  const [initializing, setInitializing] = useState(true);
-  const {colors} = useTheme();
-
-  useEffect(() => {
-    const setupFirebase = async () => {
-      try {
-        // if (!firebase.apps.length) {
-        // await firebase.initializeApp(FirebaseOptions_ios);
-        // } else {
-        await firebase.app(); // if already initialized, use that one
-        // }
-      } catch (error) {
-        console.log({error: error});
-      }
-    };
-    setupFirebase();
-  }, []);
-
-  const onAuthStateChanged = user => {
-    setUser(user);
-
-    if (initializing) {
-      setInitializing(false);
-    }
-  };
-  console.log({user_: user});
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
-  });
-
-  if (initializing) {
-    return null;
-  }
+  const {signedInRider} = useContext(AuthContext);
 
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {user ? (
-          // initializeFirebase() &&
+        {signedInRider ? (
           <Drawer.Navigator
             drawerContent={props => <DrawerContent {...props} />}
             screenOptions={{
@@ -87,6 +49,7 @@ const Routes = ({navigation}) => {
             <Drawer.Screen name="SupportScreen" component={SupportScreen} />
             <Drawer.Screen name="SettingsScreen" component={SettingsScreen} />
             <Drawer.Screen name="BookmarkScreen" component={BookmarkScreen} />
+            <Drawer.Screen name="ChatScreen" component={ChatApp} />
           </Drawer.Navigator>
         ) : (
           <AuthStack />

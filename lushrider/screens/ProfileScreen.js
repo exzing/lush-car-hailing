@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
@@ -8,110 +9,47 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
-import FormButton from '../components/FormButton';
+
 import {AuthContext} from '../navigation/AuthProvider';
 
-// import firestore from '@react-native-firebase/firestore';
 import {firebase} from '@react-native-firebase/auth';
-import PostCard from '../components/PostCard';
 
 const ProfileScreen = ({navigation, route}) => {
-  const {user, logout} = useContext(AuthContext);
+  const {signedInRider, logout} = useContext(AuthContext);
+  const userPhoto = require('../assets/users/user_icon.png');
 
-  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [deleted, setDeleted] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  const fetchPosts = async () => {
-    try {
-      const list = [];
-      const userId = route.params ? route.params.userId : user.uid;
-      var query = firebase.database().ref(`riders/${userId}`).orderByKey();
-      query.once('value').then(function (snapshot) {
-        snapshot.forEach(function (childSnapshot) {
-          const {userId, post, postImg, postTime, likes, comments} =
-            childSnapshot.val();
-          list.push({
-            id: childSnapshot.key,
-            userId,
-            userName: 'Test Name',
-            userImg:
-              'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg',
-            postTime: postTime,
-            post,
-            postImg,
-            liked: false,
-            likes,
-            comments,
-          });
-
-          // Cancel enumeration
-          return true;
-        });
-      });
-
-      setPosts(list);
-
-      if (loading) {
-        setLoading(false);
-      }
-
-      console.log('Posts: ', posts);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  const getUser = async () => {
-    await firebase
-      .database()
-      .ref('riders')
-      .once('value', snapshot => {
-        console.log({users: snapshot.val()});
-        setUserData(snapshot.val());
-      });
-
-    // await firebase()
-    //   .collection('users')
-    //   .doc(route.params ? route.params.userId : user.uid)
-    //   .get()
-    //   .then(documentSnapshot => {
-    //     if (documentSnapshot.exists) {
-    //       console.log('User Data', documentSnapshot.data());
-    //       setUserData(documentSnapshot.data());
-    //     }
-    //   });
-  };
-
   useEffect(() => {
+    const getUser = async () => {
+      await firebase
+        .database()
+        .ref('drivers')
+        .once('value', snapshot => {
+          console.log({drivers: snapshot.val()});
+          setUserData(snapshot.val());
+        });
+    };
     getUser();
-    fetchPosts();
-    navigation.addListener('focus', () => setLoading(!loading));
-  }, []);
 
-  const handleDelete = () => {};
+    navigation.addListener('focus', () => setLoading(!loading));
+  }, [loading, navigation]);
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: 'beige'}}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
         showsVerticalScrollIndicator={false}>
         <Image
-          style={styles.userImg}
-          source={{
-            uri: userData
-              ? userData.userImg ||
-                'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg'
-              : 'https://lh5.googleusercontent.com/-b0PKyNuQv5s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuuclxAM4M1SCBGAO7Rp-QP6zgBEUkOQ/s96-c/photo.jpg',
-          }}
+          resizeMode="stretch"
+          source={userPhoto}
+          style={styles.userImage}
         />
         <Text style={styles.userName}>
-          {userData ? userData.email || 'Test' : 'Test'}{' '}
-          {userData ? userData.email || 'User' : 'User'}
+          {signedInRider ? signedInRider?.displayName : 'Test User'}
         </Text>
-        {/* <Text>{route.params ? route.params.userId : user.uid}</Text> */}
         <Text style={styles.aboutUser}>
           {userData ? userData.about || 'No details added.' : ''}
         </Text>
@@ -130,7 +68,9 @@ const ProfileScreen = ({navigation, route}) => {
               <TouchableOpacity
                 style={styles.userBtn}
                 onPress={() => {
-                  navigation.navigate('EditProfile');
+                  {
+                  }
+                  // navigation.navigate('EditProfile');
                 }}>
                 <Text style={styles.userBtnTxt}>Edit</Text>
               </TouchableOpacity>
@@ -140,25 +80,6 @@ const ProfileScreen = ({navigation, route}) => {
             </>
           )}
         </View>
-
-        {/* <View style={styles.userInfoWrapper}>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>{posts.length}</Text>
-            <Text style={styles.userInfoSubTitle}>Posts</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>10,000</Text>
-            <Text style={styles.userInfoSubTitle}>Followers</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>100</Text>
-            <Text style={styles.userInfoSubTitle}>Following</Text>
-          </View>
-        </View> */}
-
-        {/* {posts.map(item => (
-          <PostCard key={item.id} item={item} onDelete={handleDelete} />
-        ))} */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -169,19 +90,23 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'beige',
     padding: 20,
   },
-  userImg: {
-    height: 150,
+  userImage: {
     width: 150,
-    borderRadius: 75,
+    height: 150,
+    // marginRight: 22,
+    // paddingTop: 30,
+    // top: 12,
+    alignSelf: 'center',
   },
   userName: {
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 10,
+    color: '#666',
   },
   aboutUser: {
     fontSize: 12,
@@ -197,15 +122,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userBtn: {
-    borderColor: '#2e64e5',
-    borderWidth: 2,
-    borderRadius: 3,
+    borderColor: '#f9d29d',
+    borderWidth: 4,
+    borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginHorizontal: 5,
   },
   userBtnTxt: {
-    color: '#2e64e5',
+    color: '#000000',
   },
   userInfoWrapper: {
     flexDirection: 'row',

@@ -5,6 +5,7 @@ import Logo from '../assets/ic_launcher_round.png';
 //import hook
 import {useProgress} from './UseRotation';
 import useRotation from './UseRotation';
+import {modalstyles} from '../styles/modalStyles';
 
 export default function RotateAnimation() {
   // get degrees from hook
@@ -16,6 +17,7 @@ export default function RotateAnimation() {
 
   return (
     <View style={styles.container}>
+      <Text style={{color: 'purple'}}>{'Pls Wait...'}</Text>
       <View style={styles.button}>
         <View style={StyleSheet.absoluteFill}>
           <Animated.View style={[styles.progress, progressStyle]} />

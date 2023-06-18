@@ -8,7 +8,6 @@ import {keys} from '../env';
 import {getCurrentLocation, locationPermission} from '../helper/helperFunction';
 import {Platform} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-// import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext();
 
@@ -95,7 +94,7 @@ export const AuthProvider = ({children}) => {
 
               const _authRiderOnlineRef = firebase
                 .database()
-                .ref(`riders/riders_online/${user?.uid}`);
+                .ref(`riders/riders_Id/${user?.uid}`);
               _authRiderOnlineRef &&
                 _authRiderOnlineRef.update({
                   fcmDeviceTokens: token,
@@ -133,7 +132,7 @@ export const AuthProvider = ({children}) => {
       const _authDriverRef = firebase.database().ref().child('drivers');
 
       const _geoFireRef = new GeoFire(
-        firebase.database().ref('riders/riders_online'),
+        firebase.database().ref('riders/riders_Id'),
       );
 
       setAuthRiderRef(_authRiderRef);
@@ -261,7 +260,7 @@ export const AuthProvider = ({children}) => {
 
                 const _authRiderOnlineRef = firebase
                   .database()
-                  .ref(`riders/riders_online/${uid}`);
+                  .ref(`riders/riders_Id/${uid}`);
 
                 _authRiderOnlineRef.set({
                   userName: userName,

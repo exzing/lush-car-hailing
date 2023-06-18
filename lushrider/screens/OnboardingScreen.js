@@ -52,20 +52,21 @@ const OnboardingScreen = ({navigation}) => {
           backgroundColor: '#a6e4d0',
           image: <Image source={require('../assets/ob3.png')} />,
           // image: <Image source={require('../assets/onboarding-img1.png')} />,
-          title: 'Drive and Ride With Ease',
+          title: 'Ride With Ease',
           subtitle: 'A New Way To Connect Drivers and Riders',
         },
         {
           backgroundColor: '#fdeb93',
           image: <Image source={require('../assets/ob5.png')} />,
-          // image: <Image source={require('../assets/onboarding-img2.png')} />,
-          title: 'Are You A Driver With No Vehicle?',
-          subtitle: 'We will Connect You With Riders Looking for Drivers',
+
+          title: 'Are You A Rider With a Vehicle to Rent Out?',
+          subtitle:
+            'We will Connect You With Quality Drivers Looking for Vehicles',
         },
         {
           backgroundColor: '#e9bcbe',
           image: <Image source={require('../assets/ob8.png')} />,
-          // image: <Image source={require('../assets/onboarding-img3.png')} />,
+
           title:
             'Are You A Rider That Needs A Driver for Within Or Outside Trips?',
           subtitle: 'We will Connect You with Quality Drivers',
